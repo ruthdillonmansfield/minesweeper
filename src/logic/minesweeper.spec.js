@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const {minesweeper, generator, getMineCoordinates, getBorders} = require('./minesweeper')
+const {sweep, generator, getMineCoordinates, getBorders} = require('./minesweeper')
 
 describe('generator', () => {
     it('is a function', () => {
@@ -8,17 +8,25 @@ describe('generator', () => {
     it('returns an array', () => {
         expect(generator()).to.eql([]);
     });
-    it('returns an array as wide as specified', () => {
+    it('the grid is as wide as the user specifies', () => {
         expect(generator(5, 1)[0].length).to.equal(5);
         expect(generator(17, 4)[0].length).to.equal(17);
     });
-    it('returns an array as high as specified', () => {
+    it('the grid is as tall as the user specifies', () => {
         expect(generator(1, 5).length).to.equal(5);
         expect(generator(1, 17).length).to.equal(17);
     });
-    it('contains mines', () => {
+    it('generates mines...', () => {
         expect(generator(1, 1, 1)[0][0].mine).to.equal(true);
+    });
+    it('...unless we don\'t ask for any!', () => {
         expect(generator(1, 1, 0)[0][0].mine).to.equal(false);
+    });
+    it('the cells have all the properties they need', () => {
+        expect(generator(1, 1, 1)[0][0]).to.haveOwnProperty('mine');
+        expect(generator(1, 1, 1)[0][0]).to.haveOwnProperty('flag');
+        expect(generator(1, 1, 1)[0][0]).to.haveOwnProperty('bordering');
+        expect(generator(1, 1, 1)[0][0]).to.haveOwnProperty('revealed');
     });
 });
 
@@ -29,13 +37,19 @@ describe('getMineCoordinates', () => {
     it('returns an array', () => {
         expect(getMineCoordinates()).to.eql([]);
     });
-    it('returns number of mines specified', () => {
+    it('creates the number of mines specified by the user', () => {
         expect(getMineCoordinates(2, 2, 1).length).to.equal(1);
         expect(getMineCoordinates(5, 5, 3).length).to.equal(3);
         expect(getMineCoordinates(8, 10, 3).length).to.equal(3);
         expect(getMineCoordinates(5, 5, 10).length).to.equal(10);
     });
-    it('never duplicates mines', () => {
+    it('the mines are arrays', () => {
+        expect(Array.isArray(getMineCoordinates(1, 1, 1)[0])).to.equal(true);
+    });
+    it('the mines have 2 coordinates', () => {
+        expect(getMineCoordinates(1, 1, 1)[0].length).to.equal(2);
+    });
+    it('never duplicates mine coordinates', () => {
         const res = getMineCoordinates(2, 2, 4);
         const first = res[0][0].toString() + res[0][1].toString();
         const second = res[1][0].toString() + res[1][1].toString();
@@ -73,12 +87,10 @@ describe('getBorders', () => {
             [
                 {
                     mine: true,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 }
             ]
@@ -90,14 +102,12 @@ describe('getBorders', () => {
             [
                 {
                     mine: true,
-                    flag: false,
                     bordering: 0
                 }
             ],
             [
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 }
             ]
@@ -109,34 +119,28 @@ describe('getBorders', () => {
             [
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 }
             ],
             [
                 {
                     mine: true,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 }
             ]
@@ -151,51 +155,42 @@ describe('getBorders', () => {
             [
                 {
                     mine: true,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: true,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 }
             ],
             [
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 }
             ],
             [
                 {
                     mine: true,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: true,
-                    flag: false,
                     bordering: 0
                 },
                 {
                     mine: false,
-                    flag: false,
                     bordering: 0
                 }
             ]
@@ -209,14 +204,277 @@ describe('getBorders', () => {
     });
 });
 
-// describe('minesweeper', () => {
-//     it('is a function', () => {
-//         expect(minesweeper).to.be.a('function');
-//     });
-//     it('returns an array', () => {
-//         expect(minesweeper()).to.equal([]);
-//     });
-//     it('returns an array when passed an array', () => {
-//         expect(minesweeper([])).to.equal([]);
-//     });
-// });
+describe('sweep', () => {
+    it('is a function', () => {
+        expect(sweep).to.be.a('function');
+    });
+    it('returns an array', () => {
+        expect(sweep([])).to.eql([]);
+    });
+    it('reveals whole grid if it is a mine', () => {
+        const board = [
+            [
+                {
+                    mine: true,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    revealed: false
+                }
+            ]
+        ]
+        expect(sweep(board, [0, 0])[0][0].revealed).to.equal(true);
+    });
+    it('reveals the clicked node', () => {
+        const board = [
+            [
+                {
+                    mine: true,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    revealed: false
+                }
+            ]
+        ]
+        expect(sweep(board, [0, 2])[0][2].revealed).to.equal(true);
+    });
+    it('reveals the whole grid horizontally if there are no mines', () => {
+        const board = [
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ]
+        ]
+        const res = sweep(board, [0, 0])
+        expect(res[0][0].revealed).to.equal(true);
+        expect(res[0][1].revealed).to.equal(true);
+        expect(res[0][2].revealed).to.equal(true);
+    });
+    it('reveals the whole grid vertically if there are no mines', () => {
+        const board = [
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ]
+        ]
+        const res = sweep(board, [0, 0])
+        expect(res[0][0].revealed).to.equal(true);
+        expect(res[1][0].revealed).to.equal(true);
+        expect(res[2][0].revealed).to.equal(true);
+    });
+    it('reveals the whole grid in 3 dimensions if there are no mines', () => {
+        const board = [
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ]
+        ]
+        const res = sweep(board, [0, 0])
+        expect(res[0][0].revealed).to.equal(true);
+        expect(res[1][0].revealed).to.equal(true);
+        expect(res[2][0].revealed).to.equal(true);
+        expect(res[0][1].revealed).to.equal(true);
+        expect(res[1][1].revealed).to.equal(true);
+        expect(res[2][1].revealed).to.equal(true);
+    });
+    it('recursively reveals multiple cells where a clump are all empty', () => {
+        const board = [
+            [
+                {
+                    mine: true,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ]
+        ]
+        const res = sweep(board, [2, 0])
+        expect(res[0][0].revealed).to.equal(false);
+        expect(res[1][0].revealed).to.equal(false);
+        expect(res[2][0].revealed).to.equal(true);
+        expect(res[0][1].revealed).to.equal(false);
+        expect(res[1][1].revealed).to.equal(true);
+        expect(res[2][1].revealed).to.equal(true);
+    });
+    it('reveals multiple cells over large, complicated areas', () => {
+        const board = [
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                },
+                {
+                    mine: true,
+                    bordering: 0,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ]
+        ]
+        const res = sweep(board, [1, 0])
+        expect(res[0][0].revealed).to.equal(true);
+        expect(res[1][0].revealed).to.equal(true);
+        expect(res[2][0].revealed).to.equal(true);
+        expect(res[3][0].revealed).to.equal(true);
+        expect(res[0][1].revealed).to.equal(false);
+        expect(res[1][1].revealed).to.equal(false);
+    });
+});
+
