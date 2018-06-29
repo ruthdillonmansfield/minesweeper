@@ -7,13 +7,16 @@ const Row = props => {
         return (
             <Cell 
                 key={'cell' + i} 
-                cells={el}
+                cell={el}
+                row={props.row}
+                grid={props.grid}
+                column={i}
+                sweep={props.sweep}
             />
         )
     })
     return (
-        <div className='select'>
-            <h5>ROW</h5>
+        <div className='row'>
             {cells}
         </div>
     );

@@ -8,6 +8,7 @@ export class Game extends Component {
         this.state = {
             grid: []
         };
+        this.sweep = this.sweep.bind(this)
     }
     componentDidMount () {
         this.setState({
@@ -19,9 +20,17 @@ export class Game extends Component {
             <div className="Game">
                 <Grid 
                     grid={this.state.grid}
+                    sweep={this.sweep}
                 />
             </div>
         );
+    }
+    sweep (grid, click) {
+        console.log(grid, click);
+        const updatedGrid = check(grid, click);
+        this.setState({
+            grid: updatedGrid
+        })
     }
 }
 
