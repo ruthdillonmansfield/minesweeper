@@ -6,13 +6,16 @@ export class Game extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            grid: []
+            grid: [],
+            width: 10,
+            height: 10,
+            mines: 10
         };
         this.sweep = this.sweep.bind(this)
     }
     componentDidMount () {
         this.setState({
-            grid: generator(5, 5, 3)
+            grid: generator(this.state.width, this.state.height, this.state.mines)
         })
     }
     render() {

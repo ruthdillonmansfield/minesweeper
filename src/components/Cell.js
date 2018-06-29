@@ -2,13 +2,19 @@ import React from 'react';
 import propTypes from 'prop-types';
 
 const Cell = props => {
-    console.log(props);
+    let contents = '';
+    if (props.cell.mine) {
+        contents = 'M'
+    }
+    if (props.cell.revealed) {
+        contents = props.cell.bordering
+    }
     return (
         <div 
             className='cell'
             onClick={props.sweep.bind(null, props.grid, [props.row, props.column])}
         >
-            <p>{props.cell.mine ? 'MINE' : props.cell.bordering}</p>
+            <p>{contents}</p>
         </div>
     );
 };
