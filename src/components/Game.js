@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Grid from './Grid';
+const {check, generator} = require('../logic/minesweeper')
 
 export class Game extends Component {
     constructor (props) {
@@ -9,7 +10,9 @@ export class Game extends Component {
         };
     }
     componentDidMount () {
-        
+        this.setState({
+            grid: generator(5, 5, 3)
+        })
     }
     render() {
         return (

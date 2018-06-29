@@ -3,9 +3,17 @@ import propTypes from 'prop-types';
 import Row from './Row'
 
 const Grid = props => {
+    const rows = props.grid.map((el, i) => {
+        return (
+            <Row 
+                key={'row' + i} 
+                cells={el}
+            />
+        )
+    })
     return (
         <div className='select'>
-            <Row />
+            {rows}
         </div>
     );
 };

@@ -94,7 +94,6 @@ const sweep = (grid, click) => {
     console.log('Starting');
     
     grid[click[0]][[click[1]]].revealed = true;
-    console.log(grid);
 
 
     // Row above
@@ -188,9 +187,7 @@ const sweep = (grid, click) => {
         } else if (!grid[click[0]+1][[click[1]]].bordering && !grid[click[0]+1][[click[1]]].revealed) {
             console.log('Bottom Centre 2');
             // If it's nor bordering and not revealed, recurse it
-            console.log(grid[click[0]+1][click[1]]);
             grid = sweep(grid, [click[0]+1, click[1]])
-            console.log(grid);
         }
 
         // Bottom Left is bordering but not revealed
@@ -223,8 +220,7 @@ const sweep = (grid, click) => {
 
     }
 
-    console.log('ENDING! Final grid:');
-    console.log(grid);
+    console.log('UNWINDING!');
     return grid
 }
 

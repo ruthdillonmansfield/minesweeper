@@ -1,22 +1,16 @@
-import React, {Constructor} from 'react'
+import React from 'react';
+import propTypes from 'prop-types';
 
+const Cell = props => {
+    return (
+        <div className='select'>
+            <p>CELL</p>
+        </div>
+    );
+};
 
-
-class Cell extends Constructor {
-    constructor (props) {
-        super(props);
-        this.state = {
-            tthing: ''
-        };
-    }
-    render () {
-        return (
-            <div className=''>
-            </div>
-        )
-    };
-}
-
-
+// Row.propTypes = {
+//   setGame: propTypes.any.isRequired
+// };
 
 export default Cell;
