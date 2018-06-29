@@ -1,5 +1,5 @@
 const expect = require('chai').expect;
-const {sweep, generator, getMineCoordinates, getBorders} = require('./minesweeper')
+const {check, generator, getMineCoordinates, getBorders} = require('./minesweeper')
 
 describe('generator', () => {
     it('is a function', () => {
@@ -204,12 +204,12 @@ describe('getBorders', () => {
     });
 });
 
-describe('sweep', () => {
+describe('check', () => {
     it('is a function', () => {
-        expect(sweep).to.be.a('function');
+        expect(check).to.be.a('function');
     });
     it('returns an array', () => {
-        expect(sweep([])).to.eql([]);
+        expect(check([])).to.eql([]);
     });
     it('reveals whole grid if it is a mine', () => {
         const board = [
@@ -228,7 +228,7 @@ describe('sweep', () => {
                 }
             ]
         ]
-        expect(sweep(board, [0, 0])[0][0].revealed).to.equal(true);
+        expect(check(board, [0, 0])[0][0].revealed).to.equal(true);
     });
     it('reveals the clicked node', () => {
         const board = [
@@ -247,7 +247,7 @@ describe('sweep', () => {
                 }
             ]
         ]
-        expect(sweep(board, [0, 2])[0][2].revealed).to.equal(true);
+        expect(check(board, [0, 2])[0][2].revealed).to.equal(true);
     });
     it('reveals the whole grid horizontally if there are no mines', () => {
         const board = [
@@ -269,7 +269,7 @@ describe('sweep', () => {
                 }
             ]
         ]
-        const res = sweep(board, [0, 0])
+        const res = check(board, [0, 0])
         expect(res[0][0].revealed).to.equal(true);
         expect(res[0][1].revealed).to.equal(true);
         expect(res[0][2].revealed).to.equal(true);
@@ -298,7 +298,7 @@ describe('sweep', () => {
                 }
             ]
         ]
-        const res = sweep(board, [0, 0])
+        const res = check(board, [0, 0])
         expect(res[0][0].revealed).to.equal(true);
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
@@ -342,7 +342,7 @@ describe('sweep', () => {
                 }
             ]
         ]
-        const res = sweep(board, [0, 0])
+        const res = check(board, [0, 0])
         expect(res[0][0].revealed).to.equal(true);
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
@@ -361,35 +361,35 @@ describe('sweep', () => {
                 {
                     mine: false,
                     bordering: 1,
-                    revealed: false
+                    revealed: true
                 }
             ],
             [
                 {
                     mine: false,
                     bordering: 1,
-                    revealed: false
+                    revealed: true
                 },
                 {
                     mine: false,
                     bordering: 0,
-                    revealed: false
+                    revealed: true
                 }
             ],
             [
                 {
                     mine: false,
                     bordering: 0,
-                    revealed: false
+                    revealed: true
                 },
                 {
                     mine: false,
                     bordering: 0,
-                    revealed: false
+                    revealed: true
                 }
             ]
         ]
-        const res = sweep(board, [2, 0])
+        const res = check(board, [2, 0])
         expect(res[0][0].revealed).to.equal(false);
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
@@ -468,13 +468,93 @@ describe('sweep', () => {
                 }
             ]
         ]
-        const res = sweep(board, [1, 0])
+        const res = check(board, [1, 0])
         expect(res[0][0].revealed).to.equal(true);
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
         expect(res[3][0].revealed).to.equal(true);
         expect(res[0][1].revealed).to.equal(true);
         expect(res[1][1].revealed).to.equal(true);
+    });
+    it.only('Keeps to the covered area', () => {
+        const board = [
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: true,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: true,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 3,
+                    revealed: false
+                },
+                {
+                    mine: true,
+                    bordering: 0,
+                    revealed: false
+                }
+            ]
+        ]
+        const res = check(board, [0, 0])
+        expect(res[0][0].revealed).to.equal(true);
+        expect(res[1][0].revealed).to.equal(true);
+        expect(res[2][0].revealed).to.equal(false);
+        expect(res[3][1].revealed).to.equal(false);
+        expect(res[3][2].revealed).to.equal(false);
+        expect(res[1][1].revealed).to.equal(true);
+        expect(res[2][2].revealed).to.equal(true);
     });
     it('Reveals the border numbers for adjacent mines', () => {
         const board = [
@@ -513,10 +593,10 @@ describe('sweep', () => {
                 }
             ]
         ]
-        const res = sweep(board, [0, 0])
+        const res = check(board, [0, 0])
         expect(res[0][1].bordering).to.equal(1);
         expect(res[0][1].revealed).to.equal(true);
-        expect(res[1][0].revealed).to.equal(false);
+        expect(res[1][0].revealed).to.equal(true);
         // expect(res[1][2].revealed).to.equal(true);
         // expect(res[1][2].revealed).to.equal(1);
     });
