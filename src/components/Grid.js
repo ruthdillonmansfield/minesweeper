@@ -1,30 +1,17 @@
-import React, {Constructor} from 'react'
-// import Row from './Row';
+import React from 'react';
+import propTypes from 'prop-types';
+import Row from './Row'
 
+const Grid = props => {
+    return (
+        <div className='select'>
+            <Row />
+        </div>
+    );
+};
 
-
-class Grid extends Constructor {
-    constructor (props) {
-        super(props);
-        this.state = {
-            tthing: ''
-        };
-    }
-    render () {
-        return (
-            <div className=''>
-                {/* <Row /> */}
-            </div>
-        )
-    };
-}
-
-
+// Grid.propTypes = {
+//   setGame: propTypes.any.isRequired
+// };
 
 export default Grid;
-
-// function Grid () {
-//     return <p>YEY</p>
-// }
-
-// export default Grid

@@ -391,9 +391,9 @@ describe('sweep', () => {
         ]
         const res = sweep(board, [2, 0])
         expect(res[0][0].revealed).to.equal(false);
-        expect(res[1][0].revealed).to.equal(false);
+        expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
-        expect(res[0][1].revealed).to.equal(false);
+        expect(res[0][1].revealed).to.equal(true);
         expect(res[1][1].revealed).to.equal(true);
         expect(res[2][1].revealed).to.equal(true);
     });
@@ -473,8 +473,52 @@ describe('sweep', () => {
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
         expect(res[3][0].revealed).to.equal(true);
-        expect(res[0][1].revealed).to.equal(false);
-        expect(res[1][1].revealed).to.equal(false);
+        expect(res[0][1].revealed).to.equal(true);
+        expect(res[1][1].revealed).to.equal(true);
+    });
+    it('Reveals the border numbers for adjacent mines', () => {
+        const board = [
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                },
+                {
+                    mine: true,
+                    bordering: 0,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                }
+            ]
+        ]
+        const res = sweep(board, [0, 0])
+        expect(res[0][1].bordering).to.equal(1);
+        expect(res[0][1].revealed).to.equal(true);
+        expect(res[1][0].revealed).to.equal(false);
+        // expect(res[1][2].revealed).to.equal(true);
+        // expect(res[1][2].revealed).to.equal(1);
     });
 });
 

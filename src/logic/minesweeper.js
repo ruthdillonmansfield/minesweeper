@@ -74,6 +74,7 @@ const getBorders = (grid) => {
 
 const sweep = (grid, click) => {
     if (!grid.length) return grid;
+    console.log('Starting', grid);
     let currentCell = grid[click[0]][click[1]];
     if (currentCell.mine) {
         return grid.map((row, i) => {
@@ -84,40 +85,128 @@ const sweep = (grid, click) => {
         })
     }
     grid[click[0]][[click[1]]].revealed = true;
-    if (grid[click[0]][[click[1]]].bordering === 0) {
-        if (click[0] > 0 && !grid[click[0] - 1][click[1]].revealed && !grid[click[0] - 1][click[1]].bordering) {
-            grid = sweep(grid, [click[0] - 1, click[1]]);
-            if (click[1] > 0) {
-                if (!grid[click[0] - 1][click[1] - 1].revealed && !grid[click[0] - 1][click[1] - 1].bordering) {
-                    grid = sweep(grid, [click[0] - 1, click[1] - 1]);
-                }
-            } 
-            if (click[1] + 1 < grid[1].length) {
-                if (!grid[click[0] - 1][click[1] + 1].revealed && !grid[click[0] - 1][click[1] + 1 ].bordering) {
-                    grid = sweep(grid, [click[0] - 1, click[1] + 1])
-                }
-            } 
-        } 
-        if (click[1] > 0 && !grid[click[0]][click[1] - 1].revealed && !grid[click[0]][click[1] - 1].bordering) {
-            if (grid[click[0]][click[1] - 1])  grid = sweep(grid, [click[0], click[1] - 1]);
+    console.log('Revealed: Grid is now:');
+    console.log(grid);
+
+
+    // Row above
+
+    if (click[0] > 0) {
+        console.log('Row above');
+
+        // Top Centre is bordering but not revealed
+        if (grid[click[0]-1][[click[1]]].bordering && !grid[click[0]-1][[click[1]]].revealed) {
+            console.log('Top Centre 1');
+            // Reveal it
+            grid[click[0]-1][[click[1]]].revealed = true;
+        } else if (!grid[click[0]-1][[click[1]]].bordering && !grid[click[0]-1][[click[1]]].revealed) {
+            console.log('Top Centre 2');
+            // If it's nor bordering and not revealed, recurse it
+            grid = sweep(grid, [click[0]-1, click[1]])
         }
-        if (click[1] < grid[click[0]].length - 1 && !grid[click[0]][click[1] + 1].revealed && !grid[click[0]][click[1] + 1].bordering) {
-            grid = sweep(grid, [click[0], click[1] + 1]);
+        // Top Left is bordering but not revealed
+        if (click[1] > 0) {
+            if (grid[click[0]-1][[click[1]-1]].bordering && !grid[click[0]-1][[click[1] - 1]].revealed) {
+                console.log('Top Left 1');
+                // Reveal it
+                grid[click[0]-1][[click[1]-1]].revealed = true;
+            } else if (!grid[click[0]-1][[click[1]-1]].bordering && !grid[click[0]-1][[click[1]]].revealed) {
+                console.log('Top Centre 2');
+                // If it's nor bordering and not revealed, recurse it
+                grid = sweep(grid, [click[0]-1, click[1]-1])
+            }
         }
-        if (click[0] < grid.length - 1 && !grid[click[0] + 1][click[1]].revealed && !grid[click[0] + 1][click[1]].bordering) {
-            grid = sweep(grid, [click[0] + 1, click[1]]);
-            if (click[1] > 0) {
-                if (!grid[click[0] + 1][click[1] - 1].revealed && !grid[click[0] + 1][click[1] - 1].bordering) {
-                    grid = sweep(grid, [click[0] + 1, click[1] - 1]);
-                }
-            } 
-            if (click[1] + 1 < grid[1].length) {
-                if (!grid[click[0] + 1][click[1] + 1].revealed && !grid[click[0] + 1][click[1] + 1].bordering) {
-                    grid = sweep(grid, [click[0] + 1, click[1] + 1])
-                }
-            } 
+
+        // Top Right is bordering but not revealed
+        if (click[1] < grid[click[0]].length - 1) {
+            if (grid[click[0]-1][[click[1]+1]].bordering && !grid[click[0]-1][[click[1]+1]].revealed) {
+                console.log('Top Right 1');
+                // Reveal it
+                grid[click[0]-1][[click[1]+1]].revealed = true;
+            } else if (!grid[click[0]-1][[click[1]+1]].bordering && !grid[click[0]-1][[click[1]+1]].revealed) {
+                console.log('Top Right 2');
+                // If it's nor bordering and not revealed, recurse it
+                grid = sweep(grid, [click[0]-1, click[1]+1])
+            }
         }
     }
+
+    // Left
+    
+    if (click[1] > 0) {
+        console.log('Left');
+        if (grid[click[0]][[click[1]-1]].bordering && !grid[click[0]][[click[1]-1]].revealed) {
+            console.log('Left 1');
+            // Reveal it
+            grid[click[0]][[click[1]-1]].revealed = true;
+        } else if (!grid[click[0]][[click[1]-1]].bordering && !grid[click[0]][[click[1]-1]].revealed) {
+            console.log('Left 2');
+            // If it's nor bordering and not revealed, recurse it
+            grid = sweep(grid, [click[0], click[1]-1])
+        }
+    }
+
+    // Right
+    
+    if (click[1] < grid[click[0]].length - 1) {
+        console.log('Right');
+        if (grid[click[0]][[click[1]+1]].bordering && !grid[click[0]][[click[1]+1]].revealed) {
+            console.log('Right 1');
+            // Reveal it
+            grid[click[0]][[click[1]+1]].revealed = true;
+        } else if (!grid[click[0]][[click[1]+1]].bordering && !grid[click[0]][[click[1]+1]].revealed) {
+            console.log('Right 2');
+            // If it's nor bordering and not revealed, recurse it
+            grid = sweep(grid, [click[0], click[1]+1])
+        }
+    }
+
+    // Row below
+    if (click[0] < grid.length - 1) {
+        console.log('Row below');
+
+        console.log(click);
+        // Bottom Centre is bordering but not revealed
+        if (grid[click[0]+1][[click[1]]].bordering && !grid[click[0]+1][[click[1]]].revealed) {
+            console.log('Bottom Centre 1');
+            // Reveal it
+            grid[click[0]+1][[click[1]]].revealed = true;
+        } else if (!grid[click[0]+1][[click[1]]].bordering && !grid[click[0]+1][[click[1]]].revealed) {
+            console.log('Bottom Centre 2');
+            // If it's nor bordering and not revealed, recurse it
+            grid = sweep(grid, [click[0]+1, click[1]])
+        }
+
+        // Bottom Left is bordering but not revealed
+        if (click[1] > 0) {
+            if (grid[click[0]+1][[click[1]-1]].bordering && !grid[click[0]+1][[click[1] - 1]].revealed) {
+                console.log('Bottom Left 1');
+                // Reveal it
+                grid[click[0]+1][[click[1]-1]].revealed = true;
+            } else if (!grid[click[0]+1][[click[1]-1]].bordering && !grid[click[0]+1][[click[1]]].revealed) {
+                console.log('Bottom Left 2');
+                // If it's nor bordering and not revealed, recurse it
+                grid = sweep(grid, [click[0]+1, click[1]-1])
+            }
+        }
+
+        // Bottom Right is bordering but not revealed
+        if (click[1] < grid[click[0]].length - 1) {
+            if (grid[click[0]+1][[click[1]+1]].bordering && !grid[click[0]+1][[click[1]+1]].revealed) {
+                console.log('Bottom Right 1');
+                // Reveal it
+                grid[click[0]+1][[click[1]+1]].revealed = true;
+            } else if (!grid[click[0]+1][[click[1]+1]].bordering && !grid[click[0]+1][[click[1]+1]].revealed) {
+                console.log('Bottom Right 2');
+                // If it's nor bordering and not revealed, recurse it
+                grid = sweep(grid, [click[0]+1, click[1]+1])
+            }
+        }
+
+    }
+
+    console.log('ENDING! Final grid:');
+    console.log(grid);
     return grid
 }
 

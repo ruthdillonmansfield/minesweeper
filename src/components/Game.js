@@ -8,6 +8,9 @@ export class Game extends Component {
             grid: []
         };
     }
+    componentDidMount () {
+        
+    }
     render() {
         return (
             <div className="Game">
@@ -20,3 +23,4 @@ export class Game extends Component {
 }
 
 export default Game;
+

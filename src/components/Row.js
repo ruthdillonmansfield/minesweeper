@@ -1,18 +1,16 @@
-import React, {Constructor} from 'react'
-import Cell from './Cell';
+import React from 'react';
+import propTypes from 'prop-types';
 
+const Row = props => {
+    return (
+        <div className='select'>
+            <h1>Retro Games</h1>
+        </div>
+    );
+};
 
-
-export class Row extends Constructor {
-    render () {
-        return (
-            <div className=''>
-                <Cell />
-            </div>
-        )
-    };
-}
-
-
+// Row.propTypes = {
+//   setGame: propTypes.any.isRequired
+// };
 
 export default Row;
