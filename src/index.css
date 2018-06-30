@@ -19,6 +19,58 @@ body {
   align-content: center;
 }
 
+.red {
+  background-color: red;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.white {
+  background-color: white;
+}
+
 .cell p {
   margin: 0;
+}
+
+.center {
+  text-align: center;
+}
+
+form {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  text-align: center;
+  margin: 0 auto;
+  max-width: 300px;
+}
+
+.Game {
+  text-align: center;
+}
+
+.Grid {
+  width: 100%;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;  
+  text-align: center;
+}
+
+.button {
+  width: 100px;
+  height: 50px;
+  border: 3px solid black;
+  margin: 10px; 
+  font-size: 16px;
+}
+
+.button:hover {
+  background-color: blue;
+  cursor: pointer;
 }

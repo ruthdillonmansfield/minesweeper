@@ -14,7 +14,7 @@ const generator = (w, h, mines) => {
         }
     });
     return getBorders(getMineCoordinates(w, h, mines).reduce((acc, el, i) => {
-        grid[el[0]][el[1]].mine = true;
+        grid[el[1]][el[0]].mine = true;
         return grid;
     }, grid));
 }
@@ -36,6 +36,7 @@ const getMineCoordinates = (w, h, mines) => {
             result.push([x, y]);
         }
     } 
+    console.log(result);
     return result;
 }
 

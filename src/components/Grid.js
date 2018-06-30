@@ -11,6 +11,7 @@ const Grid = props => {
                 row={i}
                 cells={el}
                 sweep={props.sweep}
+                status={props.status}
             />
         )
     })

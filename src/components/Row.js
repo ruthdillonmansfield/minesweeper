@@ -12,6 +12,7 @@ const Row = props => {
                 grid={props.grid}
                 column={i}
                 sweep={props.sweep}
+                status={props.status}
             />
         )
     })
