@@ -4,14 +4,18 @@ import propTypes from 'prop-types';
 const Form = props => {
     return (
         <form>
-            <h5>Width</h5>
-            <input type="text" name="firstname" />
-            <h5>Height</h5>
-            <input type="text" name="lastname" />
-            <h5>Mines</h5>
-            <input type="text" name="firstname" />
-            <br />
-            <input type="submit" value="Submit" />
+            <div class='formField'>
+                <h5>Width</h5>
+                <input type="text" value={props.width} name="firstname" onChange={props.updateWidth}/>
+            </div>
+            <div class='formField'>
+                <h5>Height</h5>
+                <input type="text" value={props.height} name="lastname" onChange={props.updateHeight} />
+            </div>
+            <div class='formField'>
+                <h5>Mines</h5>
+                <input type="text" value={props.mines} name="firstname" onChange={props.updateMines} />
+            </div>
         </form>
     );
 };
