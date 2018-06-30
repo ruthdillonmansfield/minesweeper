@@ -13,6 +13,7 @@ const Row = props => {
                 column={i}
                 sweep={props.sweep}
                 status={props.status}
+                updateFlag={props.updateFlag}
             />
         )
     })

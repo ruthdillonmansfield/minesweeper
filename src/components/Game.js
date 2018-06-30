@@ -25,6 +25,7 @@ export class Game extends Component {
         this.updateWidth = this.updateWidth.bind(this)
         this.updateHeight = this.updateHeight.bind(this)
         this.updateMines = this.updateMines.bind(this)
+        this.updateFlag = this.updateFlag.bind(this)
     }
     render() {
         let content = (
@@ -50,6 +51,7 @@ export class Game extends Component {
                     grid={this.state.grid}
                     sweep={this.sweep}
                     status={this.state.status}
+                    updateFlag={this.updateFlag}
                 />
             )
         }
@@ -83,8 +85,6 @@ export class Game extends Component {
             })
             this.updateDifficulty(this.state.activeDifficulty)
         }
-        w = w < 4 ? 4 : w;
-        h = h < 4 ? 4 : h;
     }
     updateDifficulty (difficulty) {
         let newMines = 7
@@ -136,6 +136,15 @@ export class Game extends Component {
                 mines: newMines
             });
         }
+    }
+    updateFlag (w, h, e) {
+        console.log(w, h, e);
+        e.preventDefault();
+        let newGrid = [...this.state.grid];
+        newGrid[w][h].flag = true;
+        this.setState({
+            grid: newGrid
+        })
     }
 }
 

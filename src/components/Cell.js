@@ -10,6 +10,9 @@ const Cell = props => {
     if (props.cell.revealed && !props.cell.mine) {
         contents = props.cell.bordering;
     }
+    if (props.cell.flag) {
+        contents = 'F';
+    }
     if (props.status === 'lost' && props.cell.mine) {
         contents = 'M';
         color = 'red';
@@ -19,6 +22,7 @@ const Cell = props => {
         <div 
             className={`cell ${color}`}
             onClick={props.sweep.bind(null, props.grid, [props.row, props.column], mine)}
+            onContextMenu={props.updateFlag.bind(null, props.row, props.column)}
         >
             <p>{contents}</p>
         </div>

@@ -12,6 +12,7 @@ const Grid = props => {
                 cells={el}
                 sweep={props.sweep}
                 status={props.status}
+                updateFlag={props.updateFlag}
             />
         )
     })
