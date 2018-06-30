@@ -63,6 +63,30 @@ export class Game extends Component {
     }
     sweep (grid, click, mine) {
         const updatedGrid = check(grid, click);
+        const countCorrect = updatedGrid.reduce((acc, el) => {
+            return el.reduce((count, v) => {
+                if (v.flag && v.mine) {
+                    acc++
+                }
+                return acc;
+            }, 0)
+        }, 0)
+        const countRemaining = updatedGrid.reduce((acc, el) => {
+            return el.reduce((count, v) => {
+                if (v.revealed) {
+                    acc++
+                }
+                return acc;
+            }, 0)
+        }, 0)
+        const minesDetected = (this.state.width * this.state.height) - countRemaining;
+        if (countCorrect === Number(this.state.mines) || minesDetected === Number(this.state.mines)) {
+            console.log('WON');
+            return this.setState({
+                grid: updatedGrid,
+                status: 'won'
+            })
+        }
         this.setState({
             grid: updatedGrid,
             status: mine ? 'lost' : 'playing'
@@ -138,7 +162,6 @@ export class Game extends Component {
         }
     }
     updateFlag (w, h, e) {
-        console.log(w, h, e);
         e.preventDefault();
         let newGrid = [...this.state.grid];
         newGrid[w][h].flag = true;

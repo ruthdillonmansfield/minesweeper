@@ -31,6 +31,10 @@ body {
   background-color: white;
 }
 
+.green {
+  background-color: lightgreen;
+}
+
 .cell p {
   margin: 0;
 }
@@ -89,7 +93,7 @@ input {
 .active {
   background: green;
   width: 150px;
-} 
+}
 
 .active:hover {
   background: green !important;

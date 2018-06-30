@@ -17,6 +17,9 @@ const Cell = props => {
         contents = 'M';
         color = 'red';
     }
+    if (props.status === 'won' && props.cell.mine) {
+        color = 'green';
+    }
     let mine = props.cell.mine ? true : false;
     return (
         <div 
