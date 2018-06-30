@@ -4,7 +4,7 @@ import propTypes from 'prop-types';
 const Cell = props => {
     let contents = '';
     if (props.cell.mine) {
-        contents = 'M'
+        contents = ''
     }
     if (props.cell.revealed && !props.cell.mine) {
         contents = props.cell.bordering
