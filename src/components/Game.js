@@ -7,9 +7,9 @@ export class Game extends Component {
         super(props);
         this.state = {
             grid: [],
-            width: 10,
-            height: 10,
-            mines: 10
+            width: 4,
+            height: 4,
+            mines: 3
         };
         this.sweep = this.sweep.bind(this)
     }

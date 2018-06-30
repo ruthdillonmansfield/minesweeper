@@ -476,7 +476,7 @@ describe('check', () => {
         expect(res[0][1].revealed).to.equal(true);
         expect(res[1][1].revealed).to.equal(true);
     });
-    it.only('Keeps to the covered area', () => {
+    it('Keeps to the covered area', () => {
         const board = [
             [
                 {
@@ -554,7 +554,7 @@ describe('check', () => {
         expect(res[3][1].revealed).to.equal(false);
         expect(res[3][2].revealed).to.equal(false);
         expect(res[1][1].revealed).to.equal(true);
-        expect(res[2][2].revealed).to.equal(true);
+        expect(res[2][2].revealed).to.equal(false);
     });
     it('Reveals the border numbers for adjacent mines', () => {
         const board = [
@@ -597,8 +597,102 @@ describe('check', () => {
         expect(res[0][1].bordering).to.equal(1);
         expect(res[0][1].revealed).to.equal(true);
         expect(res[1][0].revealed).to.equal(true);
-        // expect(res[1][2].revealed).to.equal(true);
-        // expect(res[1][2].revealed).to.equal(1);
+        expect(res[1][2].revealed).to.equal(false);
+        expect(res[1][2].bordering).to.equal(1);
+    });
+    it('Copes with big sweeps', () => {
+        const board = [
+            [
+                {
+                    mine: true,
+                    bordering: 0,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                }
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                },
+                {
+                    mine: true,
+                    bordering: 0,
+                    revealed: false
+                }
+
+            ]
+            [
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                },
+                {
+                    mine: true,
+                    bordering: 1,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 3,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 1,
+                    revealed: false
+                }
+
+            ],
+            [
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                },
+                {
+                    mine: true,
+                    bordering: 1,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 2,
+                    revealed: false
+                },
+                {
+                    mine: false,
+                    bordering: 0,
+                    revealed: false
+                }
+            ]
+        ]
     });
 });
 

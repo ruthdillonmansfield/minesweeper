@@ -6,7 +6,7 @@ const Cell = props => {
     if (props.cell.mine) {
         contents = 'M'
     }
-    if (props.cell.revealed) {
+    if (props.cell.revealed && !props.cell.mine) {
         contents = props.cell.bordering
     }
     return (
