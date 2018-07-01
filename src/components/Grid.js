@@ -15,10 +15,20 @@ const Grid = props => {
                 updateFlag={props.updateFlag}
             />
         )
-    })
+    });
+    const wonButton = props.status !== 'playing' ? (
+        <div className='buttons'>
+            <div className='button' onClick={props.reset}>
+                <p>Play again</p>
+            </div>
+        </div>
+    ) : '';
     return (
-        <div className='grid'>
-            {rows}
+        <div>
+            <div className='grid'>
+                {rows}
+            </div>
+            {wonButton}
         </div>
     );
 };

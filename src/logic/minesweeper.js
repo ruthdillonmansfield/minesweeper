@@ -92,7 +92,9 @@ const sweep = (grid, click) => {
     if (grid[click[0]][click[1]].mine) {
         return grid;
     }
-    grid[click[0]][[click[1]]].revealed = true;
+    if (!grid[click[0]][[click[1]]].mine) {
+        grid[click[0]][[click[1]]].revealed = true;
+    }
 
     // Row above
 
