@@ -5,40 +5,40 @@ import Form from './Form';
 const Setup = props => {    
     return (
         <div className="Game">
-            <h3>Grid Size</h3>
+            <h2 class='mb-0 mt-50'>GRID SIZE</h2>
             <div className='buttons'>
                 <div className={`button ${props.activeSize === 'small' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 7, 7, 'small')}>
-                    <p>Small</p>
+                    <p>SMALL</p>
                 </div>
                 <div className={`button ${props.activeSize === 'medium' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 10, 10, 'medium')}>
-                    <p>Medium</p>
+                    <p>MEDIUM</p>
                 </div>
                 <div className={`button ${props.activeSize === 'large' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 20, 15, 'large')}>
-                    <p>Large</p>
+                    <p>LARGE</p>
                 </div>
                 <div className={`button ${props.activeSize === 'huge' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 25, 30, 'huge')}>
-                    <p>Huge</p>
+                    <p>HUGE</p>
                 </div>
                 <div className={`button ${props.activeSize === 'custom' ? 'active' : ''}`} onClick={props.customise.bind(null, 'size')}>
-                    <p>Custom</p>
+                    <p>CUSTOM</p>
                 </div>
             </div>
-            <h3>Difficulty</h3>
+            <h2 class='mb-0 mt-50'>DIFFICULTY</h2>
             <div className='buttons'>
                 <div className={`button ${props.activeDifficulty === 'easy' ? 'active' : ''}`} onClick={props.updateDifficulty.bind(null, 'easy')}>
-                    <p>Easy</p>
+                    <p>EASY</p>
                 </div>
                 <div className={`button ${props.activeDifficulty === 'normal' ? 'active' : ''}`} onClick={props.updateDifficulty.bind(null, 'normal')}>
-                    <p>Normal</p>
+                    <p>NORMAL</p>
                 </div>
                 <div className={`button ${props.activeDifficulty === 'hard' ? 'active' : ''}`} onClick={props.updateDifficulty.bind(null, 'hard')}>
-                    <p>Hard</p>
+                    <p>HARD</p>
                 </div>
                 <div className={`button ${props.activeDifficulty === 'crazy' ? 'active' : ''}`} onClick={props.updateDifficulty.bind(null, 'crazy')}>
-                    <p>Crazy</p>
+                    <p>CRAZY</p>
                 </div>
                 <div className={`button ${props.activeDifficulty === 'custom' ? 'active' : ''}`} onClick={props.customise.bind(null, 'difficulty')}>
-                    <p>Custom</p>
+                    <p>CUSTOM</p>
                 </div>
             </div>
             {props.custom ? <Form 
@@ -50,7 +50,7 @@ const Setup = props => {
                 updateMines={props.updateMines}
             /> : ''}
             <div className='buttons'>
-                <div className='button' onClick={props.play}>
+                <div className='button-wide mt-50' onClick={props.play}>
                     <p>GO</p>
                 </div>
             </div>

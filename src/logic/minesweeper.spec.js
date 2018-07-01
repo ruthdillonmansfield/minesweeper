@@ -228,7 +228,7 @@ describe('check', () => {
                 }
             ]
         ]
-        expect(check(board, [0, 0])[0][0].revealed).to.equal(true);
+        expect(check(board, [0, 0]).grid[0][0].revealed).to.equal(true);
     });
     it('reveals the clicked node', () => {
         const board = [
@@ -247,7 +247,7 @@ describe('check', () => {
                 }
             ]
         ]
-        expect(check(board, [0, 2])[0][2].revealed).to.equal(true);
+        expect(check(board, [0, 2]).grid[0][2].revealed).to.equal(true);
     });
     it('reveals the whole grid horizontally if there are no mines', () => {
         const board = [
@@ -269,7 +269,7 @@ describe('check', () => {
                 }
             ]
         ]
-        const res = check(board, [0, 0])
+        const res = check(board, [0, 0]).grid
         expect(res[0][0].revealed).to.equal(true);
         expect(res[0][1].revealed).to.equal(true);
         expect(res[0][2].revealed).to.equal(true);
@@ -298,7 +298,7 @@ describe('check', () => {
                 }
             ]
         ]
-        const res = check(board, [0, 0])
+        const res = check(board, [0, 0]).grid
         expect(res[0][0].revealed).to.equal(true);
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
@@ -342,7 +342,7 @@ describe('check', () => {
                 }
             ]
         ]
-        const res = check(board, [0, 0])
+        const res = check(board, [0, 0]).grid
         expect(res[0][0].revealed).to.equal(true);
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
@@ -389,7 +389,7 @@ describe('check', () => {
                 }
             ]
         ]
-        const res = check(board, [2, 0])
+        const res = check(board, [2, 0]).grid
         expect(res[0][0].revealed).to.equal(false);
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
@@ -468,7 +468,7 @@ describe('check', () => {
                 }
             ]
         ]
-        const res = check(board, [1, 0])
+        const res = check(board, [1, 0]).grid
         expect(res[0][0].revealed).to.equal(true);
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(true);
@@ -547,7 +547,7 @@ describe('check', () => {
                 }
             ]
         ]
-        const res = check(board, [0, 0])
+        const res = check(board, [0, 0]).grid
         expect(res[0][0].revealed).to.equal(true);
         expect(res[1][0].revealed).to.equal(true);
         expect(res[2][0].revealed).to.equal(false);
@@ -593,7 +593,7 @@ describe('check', () => {
                 }
             ]
         ]
-        const res = check(board, [0, 0])
+        const res = check(board, [0, 0]).grid
         expect(res[0][1].bordering).to.equal(1);
         expect(res[0][1].revealed).to.equal(true);
         expect(res[1][0].revealed).to.equal(true);

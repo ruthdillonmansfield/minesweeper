@@ -36,7 +36,6 @@ const getMineCoordinates = (w, h, mines) => {
             result.push([x, y]);
         }
     } 
-    console.log(result);
     return result;
 }
 

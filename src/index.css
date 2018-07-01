@@ -1,7 +1,30 @@
+@import url('https://fonts.googleapis.com/css?family=Barrio|Bungee+Shade|Cinzel+Decorative|Eater|Frijole|Indie+Flower|Londrina+Outline|Poor+Story|Rajdhani|Acme|Markazi+Text|Source+Sans+ProBowlby+One+SC|Frijole|Henny+Penny|Love+Ya+Like+A+Sister|Skranji:700');
+
+
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  
+  font-family: 'Love Ya Like A Sister', cursive;
+  /* font-family: 'Henny Penny', cursive; */
+  background-color: #d5cccc;
+}
+
+h1 {
+  font-family: 'Eater', cursive;
+  font-size: 40px;
+}
+
+p {
+  font-size: 20px;
+}
+
+.mb-0 {
+  margin-bottom: 0px;
+}
+
+.mt-50 {
+  margin-top: 50px !important;
 }
 
 .row {
@@ -12,7 +35,7 @@ body {
 .cell {
   height: 30px;
   width: 30px;
-  border: 2px solid black;
+  border: 1px solid black;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -37,6 +60,12 @@ body {
 
 .cell p {
   margin: 0;
+  padding: 5px;
+}
+
+.mine, .flag {
+  width: 100%;
+  height: 100%;
 }
 
 .center {
@@ -48,6 +77,7 @@ form {
   justify-content: center;
   text-align: center;
   margin: 0 auto;
+  margin-top: 50px;
 }
 
 input {
@@ -63,12 +93,20 @@ input {
   margin: 0;
 }
 
+h5 {font-size: 23px;}
+
+h3 {font-size: 30px;}
+
 .Game {
   text-align: center;
 }
 
 .Grid {
   width: 100%;
+}
+
+.grid-container {
+  text-align: center;
 }
 
 .buttons {
@@ -80,8 +118,11 @@ input {
 .button {
   width: 100px;
   height: 50px;
-  border: 3px solid black;
-  background: #54adc0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-top: 3px solid black;
+  background: #d5cccc;
   margin: 10px 0 10px 0; 
   font-size: 16px;
   -webkit-transition: width 0.4s ease-in-out;
@@ -90,16 +131,39 @@ input {
   transition: width 0.4s ease-in-out;
 }
 
-.active {
-  background: green;
+.button p {
+  margin: 0;
+}
+
+.button-wide {
   width: 150px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #54adc0;
+  margin: 10px 0 10px 0; 
+  font-size: 25px;
+}
+
+.active {
+  background: #ae2a2a;
+  color: #fff;
+  width: 200px;
 }
 
 .active:hover {
-  background: green !important;
+  background: #ae2a2a !important;
+  color: #fff;
 }
 
 .button:hover {
+  background-color: #2e4449;
+  color: white;
+  cursor: pointer;
+}
+
+.button-wide:hover {
   background-color: #2e4449;
   color: white;
   cursor: pointer;

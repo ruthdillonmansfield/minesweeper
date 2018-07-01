@@ -8,13 +8,13 @@ const Cell = props => {
         contents = '';
     }
     if (props.cell.revealed && !props.cell.mine) {
-        contents = props.cell.bordering;
+        contents = <p>{props.cell.bordering}</p>;
     }
     if (props.cell.flag) {
-        contents = 'F';
+        contents = <img src='./flag.png' alt='flag' className='flag'/>;
     }
     if (props.status === 'lost' && props.cell.mine) {
-        contents = 'M';
+        contents = <img src='./mine.png' alt='mine' className='mine'/>;
         color = 'red';
     }
     if (props.status === 'won' && props.cell.mine) {
@@ -27,7 +27,7 @@ const Cell = props => {
             onClick={props.sweep.bind(null, props.grid, [props.row, props.column], props.cell.mine)}
             onContextMenu={props.updateFlag.bind(null, props.row, props.column)}
         >
-            <p>{contents}</p>
+            {contents}
         </div>
     );
 };
