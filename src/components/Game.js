@@ -66,19 +66,19 @@ export class Game extends Component {
     sweep (grid, click, mine) {
         const updatedGrid = check(grid, click);
         let countRemaining = 0;
-        for (let i = 0; i < updatedGrid.length; i++) {
-            for (let j = 0; j < updatedGrid[i].length; j++) {
-                if (updatedGrid[i][j].revealed && !updatedGrid[i][j].mine) {
+        for (let i = 0; i < updatedGrid.grid.length; i++) {
+            for (let j = 0; j < updatedGrid.grid[i].length; j++) {
+                if (updatedGrid.grid[i][j].revealed && !updatedGrid.grid[i][j].mine) {
                     console.log(i, j, 'true');
                     countRemaining++;
                 } else {
                     console.log(i, j);
-                    console.log(updatedGrid[i][j]);
+                    console.log(updatedGrid.grid[i][j]);
                 }
             }
         }
         console.log(countRemaining);
-        // const countRemaining = updatedGrid.reduce((acc, el) => {
+        // const countRemaining = updatedGrid.grid.reduce((acc, el) => {
         //     return acc += el.reduce((count, v) => {
         //         if (v.revealed) {
         //             count++
@@ -89,15 +89,15 @@ export class Game extends Component {
         const minesDetected = (this.state.width * this.state.height) - countRemaining;
         console.log('there are mines detected: ', minesDetected);
         console.log('and mines: ', this.state.mines);
-        if (minesDetected === Number(this.state.mines)) {
+        if (minesDetected === Number(this.state.mines) && updatedGrid.result === 'continue') {
             console.log('WON');
             return this.setState({
-                grid: updatedGrid,
+                grid: updatedGrid.grid,
                 status: 'won'
             })
         }
         this.setState({
-            grid: updatedGrid,
+            grid: updatedGrid.grid,
             status: mine ? 'lost' : 'playing'
         })
     }

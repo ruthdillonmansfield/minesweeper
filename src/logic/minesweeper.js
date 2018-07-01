@@ -77,14 +77,20 @@ const check = (grid, click) => {
     if (!grid.length) return grid;
     let currentCell = grid[click[0]][click[1]];
     if (currentCell.mine) {
-        return grid.map((row, i) => {
-            return row.map((el, v) => {
-                el.revealed = true;
-                return el;
-            })
-        })
+        return {
+            grid: grid.map((row, i) => {
+                return row.map((el, v) => {
+                    el.revealed = true;
+                    return el;
+                })
+            }),
+            result: 'lose'
+        }
     }
-    return sweep(grid, click);
+    return {
+        grid: sweep(grid, click),
+        result: 'continue'
+    };
 }
 
 
