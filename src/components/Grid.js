@@ -16,7 +16,7 @@ const Grid = props => {
             />  
         )
     });
-    let message = '';
+    let message = <h3>{`There are ${props.mines} mines!`}</h3>;
     if (props.status === 'won') {
         message = <h3>YOU WON!</h3>
     }

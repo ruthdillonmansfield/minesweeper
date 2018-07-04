@@ -24,7 +24,7 @@ const Cell = props => {
     return (
         <div 
             className={`cell ${color}`}
-            onClick={props.sweep.bind(null, props.grid, [props.row, props.column], props.cell.mine)}
+            onClick={props.sweep.bind(null, props.grid, [props.row, props.column], props.cell.mine, props.cell.flag)}
             onContextMenu={props.updateFlag.bind(null, props.row, props.column)}
         >
             {contents}

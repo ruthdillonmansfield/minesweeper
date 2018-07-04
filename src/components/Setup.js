@@ -13,10 +13,10 @@ const Setup = props => {
                 <div className={`button ${props.activeSize === 'medium' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 10, 10, 'medium')}>
                     <p>MEDIUM</p>
                 </div>
-                <div className={`button ${props.activeSize === 'large' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 20, 15, 'large')}>
+                <div className={`button ${props.activeSize === 'large' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 18, 15, 'large')}>
                     <p>LARGE</p>
                 </div>
-                <div className={`button ${props.activeSize === 'huge' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 25, 30, 'huge')}>
+                <div className={`button ${props.activeSize === 'huge' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 25, 20, 'huge')}>
                     <p>HUGE</p>
                 </div>
                 <div className={`button ${props.activeSize === 'custom' ? 'active' : ''}`} onClick={props.customise.bind(null, 'size')}>
@@ -41,6 +41,7 @@ const Setup = props => {
                     <p>CUSTOM</p>
                 </div>
             </div>
+            <p className='middle'>Your screen is kinda small! Stick to SMALL and MEDIUM grids...</p>
             {props.custom ? <Form 
                 height={props.height}
                 width={props.width}

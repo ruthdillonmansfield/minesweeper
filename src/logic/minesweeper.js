@@ -86,6 +86,9 @@ const check = (grid, click) => {
             result: 'lose'
         }
     }
+    if (grid[click[0]][click[1]].bordering) {
+        grid[click[0]][[click[1]]].revealed = true;
+    }
     return {
         grid: sweep(grid, click),
         result: 'continue'
@@ -94,7 +97,7 @@ const check = (grid, click) => {
 
 
 const sweep = (grid, click) => {
-    if (grid[click[0]][click[1]].mine) {
+    if (grid[click[0]][click[1]].mine || grid[click[0]][click[1]].bordering) {
         return grid;
     }
     if (!grid[click[0]][[click[1]]].mine) {

@@ -54,6 +54,7 @@ export class Game extends Component {
                     status={this.state.status}
                     updateFlag={this.updateFlag}
                     reset={this.reset}
+                    mines={this.state.mines}
                 />
             )
         }
@@ -63,21 +64,24 @@ export class Game extends Component {
             </div>
         );
     }
-    sweep (grid, click, mine) {
+    sweep (grid, click, mine, flag) {
+        if (flag) {
+            return;
+        }
         const updatedGrid = check(grid, click);
         let countRemaining = 0;
         for (let i = 0; i < updatedGrid.grid.length; i++) {
             for (let j = 0; j < updatedGrid.grid[i].length; j++) {
                 if (updatedGrid.grid[i][j].revealed && !updatedGrid.grid[i][j].mine) {
-                    console.log(i, j, 'true');
+                    // console.log(i, j, 'true');
                     countRemaining++;
                 } else {
-                    console.log(i, j);
-                    console.log(updatedGrid.grid[i][j]);
+                    // console.log(i, j);
+                    // console.log(updatedGrid.grid[i][j]);
                 }
             }
         }
-        console.log(countRemaining);
+        // console.log(countRemaining);
         // const countRemaining = updatedGrid.grid.reduce((acc, el) => {
         //     return acc += el.reduce((count, v) => {
         //         if (v.revealed) {
@@ -87,8 +91,8 @@ export class Game extends Component {
         //     }, 0)
         // }, 0)
         const minesDetected = (this.state.width * this.state.height) - countRemaining;
-        console.log('there are mines detected: ', minesDetected);
-        console.log('and mines: ', this.state.mines);
+        // console.log('there are mines detected: ', minesDetected);
+        // console.log('and mines: ', this.state.mines);
         if (minesDetected === Number(this.state.mines) && updatedGrid.result === 'continue') {
             console.log('WON');
             return this.setState({
@@ -108,29 +112,40 @@ export class Game extends Component {
         })
     }
     updateSize (w, h, size) {
-        if (w && h) {
-            this.setState({
-                width: w,
-                height: h,
-                activeSize: size,
-                custom: false
-            })
-            this.updateDifficulty(this.state.activeDifficulty)
+        let newMines = 7
+        if (this.state.activeDifficulty === 'easy') {
+            newMines = Math.ceil((w * h) / 10)
         }
+        if (this.state.activeDifficulty === 'normal') {
+            newMines = Math.ceil((w * h) / 6)
+        }
+        if (this.state.activeDifficulty === 'hard') {
+            newMines = Math.ceil((w * h) / 4)
+        }
+        if (this.state.activeDifficulty === 'crazy') {
+            newMines = Math.ceil((w * h) / 3)
+        }
+        this.setState({
+            mines: newMines,
+            width: w,
+            height: h,
+            activeSize: size,
+            custom: false
+        });
     }
     updateDifficulty (difficulty) {
         let newMines = 7
         if (difficulty === 'easy') {
-            newMines = Math.ceil(this.state.width * this.state.height / 9)
+            newMines = Math.ceil((this.state.width * this.state.height) / 10)
         }
         if (difficulty === 'normal') {
-            newMines = Math.ceil(this.state.width * this.state.height / 7)
+            newMines = Math.ceil((this.state.width * this.state.height) / 6)
         }
         if (difficulty === 'hard') {
-            newMines = Math.ceil(this.state.width * this.state.height / 4.5)
+            newMines = Math.ceil((this.state.width * this.state.height) / 4)
         }
         if (difficulty === 'crazy') {
-            newMines = Math.ceil(this.state.width * this.state.height / 2.5)
+            newMines = Math.ceil((this.state.width * this.state.height) / 3)
         }
         this.setState({
             mines: newMines,
@@ -172,7 +187,7 @@ export class Game extends Component {
     updateFlag (w, h, e) {
         e.preventDefault();
         let newGrid = [...this.state.grid];
-        newGrid[w][h].flag = true;
+        newGrid[w][h].flag = !newGrid[w][h].flag;
         this.setState({
             grid: newGrid
         })

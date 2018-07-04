@@ -8,7 +8,13 @@ class App extends Component {
         <header className="App-header">
           <h1 className="center">Minesweeper</h1>
         </header>
-        <Game />
+        <div className='desktop'>
+          <Game />
+        </div>
+        <div className='mobile'>
+          <br /><br /><br /><br />
+          <h5>Are you really trying to play Minesweeper on mobile?</h5>
+        </div>
       </div>
     );
   }
