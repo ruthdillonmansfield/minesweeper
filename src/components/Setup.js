@@ -54,6 +54,9 @@ const Setup = props => {
                 <div className='button-wide mt-50' onClick={props.play}>
                     <p>GO</p>
                 </div>
+                <div className='button-wide pale-button mt-50' onClick={props.toggleInstructions}>
+                    <p>How to play</p>
+                </div>
             </div>
         </div>
     );

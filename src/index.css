@@ -169,7 +169,7 @@ h3 {font-size: 30px;}
   justify-content: center;
   background: #ae2a2a;
   color: #fff;
-  margin: 10px 0 10px 0; 
+  margin: 10px; 
   font-size: 25px;
 }
 
@@ -194,4 +194,14 @@ h3 {font-size: 30px;}
   background-color: #2e4449;
   color: white;
   cursor: pointer;
+}
+
+.pale-button {
+  background-color: #796b6b;
+}
+
+.instructions {
+  margin: 0 auto;
+  text-align: center;
+  max-width: 450px;
 }

@@ -16,7 +16,10 @@ const Grid = props => {
             />  
         )
     });
-    let message = <h3>{`There are ${props.mines} mines!`}</h3>;
+    let message = <div>
+            <h3>{`There are ${props.mines} mines!`}</h3>
+            <p><em>Remember, you can right click to flag mines!</em></p>
+        </div>
     if (props.status === 'won') {
         message = <h3>YOU WON!</h3>
     }

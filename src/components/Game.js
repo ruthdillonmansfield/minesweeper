@@ -15,7 +15,8 @@ export class Game extends Component {
             setup: true,
             custom: false,
             activeSize: 'medium',
-            activeDifficulty: 'normal'
+            activeDifficulty: 'normal',
+            instructions: false
         };
         this.sweep = this.sweep.bind(this)
         this.play = this.play.bind(this)
@@ -27,6 +28,7 @@ export class Game extends Component {
         this.updateMines = this.updateMines.bind(this)
         this.updateFlag = this.updateFlag.bind(this)
         this.reset = this.reset.bind(this)
+        this.toggleInstructions = this.toggleInstructions.bind(this)
     }
     render() {
         let content = (
@@ -44,6 +46,7 @@ export class Game extends Component {
                 updateHeight={this.updateHeight}
                 updateWidth={this.updateWidth}
                 updateMines={this.updateMines}
+                toggleInstructions={this.toggleInstructions}
             />
         )
         if (!this.state.setup) {
@@ -56,6 +59,23 @@ export class Game extends Component {
                     reset={this.reset}
                     mines={this.state.mines}
                 />
+            )
+        }
+        if (this.state.instructions) {
+            content = (
+                <div className='instructions'>
+                    <h3>How To Play</h3>
+                    <p>The aim of the game is to reveal all of the cells that DO NOT contain a mine.</p>
+                    <p>Numbers in cells indicate the number of mines which are adjacent to that cell, including diagonally.</p>
+                    <h2>If you click a mine, you lose immediately.</h2>
+                    <p>If you like, you can right-click cells to 'flag' them to help you remember where the mines are.</p>
+                    <h2>Reveal all of the cells which are NOT mines to win!</h2>
+                    <div className='buttons'>
+                        <div className='button-wide mt-50' onClick={this.toggleInstructions}>
+                            <p>Got it!</p>
+                        </div>
+                    </div>
+                </div>
             )
         }
         return (
@@ -196,6 +216,11 @@ export class Game extends Component {
         this.setState({
             setup: true,
             status: 'playing'
+        })
+    }
+    toggleInstructions () {
+        this.setState({
+            instructions: !this.state.instructions
         })
     }
 }
