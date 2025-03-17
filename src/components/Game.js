@@ -6,17 +6,19 @@ const {check, generator} = require('../logic/minesweeper')
 export class Game extends Component {
     constructor (props) {
         super(props);
+        const isSmallScreen = window.innerWidth < 800;
         this.state = {
             grid: [],
-            width: 10,
-            height: 10,
-            mines: 12,
+            width: isSmallScreen ? 6 : 10,
+            height: isSmallScreen ? 8 : 10,
+            mines: isSmallScreen ? 8 : 12,
             status: 'playing',
             setup: true,
             custom: false,
-            activeSize: 'medium',
+            activeSize: isSmallScreen ? 'large' : 'medium',
             activeDifficulty: 'normal',
-            instructions: false
+            instructions: false,
+            remaining: isSmallScreen ? 8 : 12,
         };
         this.sweep = this.sweep.bind(this)
         this.play = this.play.bind(this)
@@ -58,18 +60,21 @@ export class Game extends Component {
                     updateFlag={this.updateFlag}
                     reset={this.reset}
                     mines={this.state.mines}
+                    play={this.play}
+                    remaining={this.state.remaining}
                 />
             )
         }
         if (this.state.instructions) {
             content = (
                 <div className='instructions'>
-                    <h3>How To Play</h3>
-                    <p>The aim of the game is to reveal all of the cells that DO NOT contain a mine.</p>
-                    <p>Numbers in cells indicate the number of mines which are adjacent to that cell, including diagonally.</p>
-                    <h2>If you click a mine, you lose immediately.</h2>
-                    <p>If you like, you can right-click cells to 'flag' them to help you remember where the mines are.</p>
-                    <h2>Reveal all of the cells which are NOT mines to win!</h2>
+                    <h2>HOW TO PLAY</h2>
+                    <p><strong>Your goal</strong> is to reveal all safe cells without hitting a mine.</p>
+                    <p><strong>Numbers</strong> tell you how many mines are <em>next to a cell</em> (even diagonally).</p>
+                    <p><strong>Hit a mine?</strong> Game over! 💥</p>
+                    <p><strong>Right-click (press and hold on mobile) to flag suspected mines</strong> and plan your moves.</p>
+                    <p><strong>Clear all non-mine cells to win!</strong></p>
+
                     <div className='buttons'>
                         <div className='button-wide mt-50' onClick={this.toggleInstructions}>
                             <p>Got it!</p>
@@ -85,7 +90,7 @@ export class Game extends Component {
         );
     }
     sweep (grid, click, mine, flag) {
-        if (flag) {
+        if (flag || this.state.status !== "playing") {
             return;
         }
         const updatedGrid = check(grid, click);
@@ -102,19 +107,8 @@ export class Game extends Component {
             }
         }
         // console.log(countRemaining);
-        // const countRemaining = updatedGrid.grid.reduce((acc, el) => {
-        //     return acc += el.reduce((count, v) => {
-        //         if (v.revealed) {
-        //             count++
-        //         }
-        //         return count;
-        //     }, 0)
-        // }, 0)
         const minesDetected = (this.state.width * this.state.height) - countRemaining;
-        // console.log('there are mines detected: ', minesDetected);
-        // console.log('and mines: ', this.state.mines);
         if (minesDetected === Number(this.state.mines) && updatedGrid.result === 'continue') {
-            console.log('WON');
             return this.setState({
                 grid: updatedGrid.grid,
                 status: 'won'
@@ -128,7 +122,9 @@ export class Game extends Component {
     play () {
         this.setState({
             grid: generator(this.state.width, this.state.height, this.state.mines),
-            setup: false
+            setup: false,
+            remaining: this.state.mines,
+            status: 'playing'
         })
     }
     updateSize (w, h, size) {
@@ -149,6 +145,7 @@ export class Game extends Component {
             mines: newMines,
             width: w,
             height: h,
+            remaining: newMines,
             activeSize: size,
             custom: false
         });
@@ -181,8 +178,8 @@ export class Game extends Component {
         });
     }
     updateWidth (e) {
-        let newWidth = e.target.value
-        if (!/([\D])/.test(newWidth)) {
+        let newWidth = e.target.value;
+        if (!/([\D])/.test(newWidth) && e.target.value < 41) {
             this.setState({
                 width: newWidth
             });
@@ -190,7 +187,7 @@ export class Game extends Component {
     }
     updateHeight (e) {
         let newHeight = e.target.value
-        if (!/([\D])/.test(newHeight)) {
+        if (!/([\D])/.test(newHeight) && e.target.value < 41) {
             this.setState({
                 height: newHeight
             });
@@ -198,23 +195,35 @@ export class Game extends Component {
     }
     updateMines (e) {
         let newMines = e.target.value
-        if (!/([\D])/.test(newMines)) {
+        let max = Math.round((this.state.height * this.state.width) * 0.8) 
+        if (!/([\D])/.test(newMines) && e.target.value < max) {
             this.setState({
-                mines: newMines
+                mines: newMines,
+                remaining: newMines
             });
         }
     }
     updateFlag (w, h, e) {
         e.preventDefault();
         let newGrid = [...this.state.grid];
+        const countFlags = newGrid.reduce((acc, el) => {
+            return acc += el.reduce((count, v) => {
+                if (v.flag) {
+                    count++
+                }
+                return count;
+            }, 0)
+        }, 0)
         newGrid[w][h].flag = !newGrid[w][h].flag;
         this.setState({
-            grid: newGrid
+            grid: newGrid,
+            remaining: newGrid[w][h].flag ? this.state.mines - countFlags - 1 : this.state.mines - countFlags + 1
         })
     }
     reset () {
         this.setState({
             setup: true,
+            remaining: this.state.mines,
             status: 'playing'
         })
     }

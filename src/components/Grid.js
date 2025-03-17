@@ -1,49 +1,39 @@
 import React from 'react';
 import propTypes from 'prop-types';
-import Row from './Row'
+import Row from './Row';
 
 const Grid = props => {
-    const rows = props.grid.map((el, i) => {
-        return (
-            <Row 
-                key={'row' + i} 
-                grid={props.grid}
-                row={i}
-                cells={el}
-                sweep={props.sweep}
-                status={props.status}
-                updateFlag={props.updateFlag}
-            />  
-        )
-    });
-    let message = <div>
-            <h3>{`There are ${props.mines} mines!`}</h3>
-            <p><em>Remember, you can right click to flag mines!</em></p>
-        </div>
-    if (props.status === 'won') {
-        message = <h3>YOU WON!</h3>
-    }
-    if (props.status === 'lost') {
-        message = <h3>YOU LOST!</h3>
-    }
-    const wonButton = props.status !== 'playing' ? (
-        <div className='buttons'>
-            <div className='button-wide' onClick={props.reset}>
-                <p>PLAY AGAIN</p>
-            </div>
-        </div>
-    ) : '';
+    const rows = props.grid.map((el, i) => (
+        <Row 
+            key={'row' + i} 
+            grid={props.grid}
+            row={i}
+            cells={el}
+            sweep={props.sweep}
+            status={props.status}
+            updateFlag={props.updateFlag}
+        />  
+    ));
+
     return (
-        <div class='grid-container'>
+        <div className={`grid-container ${props.status === 'won' ? 'win' : ''} ${props.status === 'lost' ? 'lose' : ''}`}>
             <div className='grid'>
                 {rows}
             </div>
-            {message}
-            {wonButton}
+            <div className={`status-message ${props.status}`}>
+                {props.status === 'playing' ? `${props.remaining} Remaining` : props.status === 'won' ? "🎉 YOU WON! 🎉" : "💥 YOU LOST 💥"}
+            </div>
+                <div className='action-buttons'>
+                    <div className='button-wide mt-50 main-button' onClick={props.play}>
+                        <p>{props.status !== 'playing' ? "Play Again" : "Reset"}</p>
+                    </div>
+                    <div className="button-wide mt-50 pale-button" onClick={props.reset}>
+                        <p>Back</p>
+                    </div>
+                </div>
         </div>
     );
 };
-
 // Grid.propTypes = {
 //   setGame: propTypes.any.isRequired
 // };

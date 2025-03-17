@@ -11,10 +11,6 @@ class App extends Component {
         <div className='desktop'>
           <Game />
         </div>
-        <div className='mobile'>
-          <br /><br /><br /><br />
-          <h5>Are you really trying to play Minesweeper on mobile?</h5>
-        </div>
       </div>
     );
   }
