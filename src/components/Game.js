@@ -92,15 +92,26 @@ export class Game extends Component {
             </div>
         );
     }
-    sweep (grid, click, mine, flag) {
+    sweep(grid, click, mine, flag) {
         if (flag || this.state.status !== "playing") {
             return;
         }
         let updatedGrid = [...grid];
-
+    
+        // Handle first click mine hit with "First Click Insurance"
         if (this.state.firstClick && mine) {
-            updatedGrid = this.moveMine(updatedGrid, click); 
-            mine = false; 
+            console.log('insured');
+            updatedGrid = this.moveMine(updatedGrid, click);
+            updatedGrid = check(updatedGrid, click);
+            this.setState({
+                grid: updatedGrid.grid,
+                status: 'firstClickInsurance',
+                firstClick: false
+            });
+            setTimeout(() => {
+                this.setState({ status: 'playing' });
+            }, 3000);
+            return;
         }
     
         updatedGrid = check(updatedGrid, click);
@@ -108,28 +119,24 @@ export class Game extends Component {
         for (let i = 0; i < updatedGrid.grid.length; i++) {
             for (let j = 0; j < updatedGrid.grid[i].length; j++) {
                 if (updatedGrid.grid[i][j].revealed && !updatedGrid.grid[i][j].mine) {
-                    // console.log(i, j, 'true');
                     countRemaining++;
-                } else {
-                    // console.log(i, j);
-                    // console.log(updatedGrid.grid[i][j]);
                 }
             }
         }
-        // console.log(countRemaining);
         const minesDetected = (this.state.width * this.state.height) - countRemaining;
         if (minesDetected === Number(this.state.mines) && updatedGrid.result === 'continue') {
             return this.setState({
                 grid: updatedGrid.grid,
                 status: 'won'
-            })
+            });
         }
         this.setState({
             grid: updatedGrid.grid,
             status: mine ? 'lost' : 'playing',
             firstClick: false
-        })
+        });
     }
+    
     moveMine(grid, click) {
         let [row, col] = click;
         
@@ -141,15 +148,18 @@ export class Game extends Component {
                 }
             }
         }
-
+    
         if (emptyCells.length > 0) {
             let [newRow, newCol] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             grid[newRow][newCol].mine = true;
             grid[row][col].mine = false;
+            // Mark the clicked cell for animation
+            grid[row][col].removedMine = true;
         }
-    
+        
         return grid;
     }
+    
     
     play () {
         this.setState({

@@ -21,8 +21,15 @@ const Grid = props => {
                 {rows}
             </div>
             <div className={`status-message ${props.status}`}>
-                {props.status === 'playing' ? `${props.remaining} Remaining` : props.status === 'won' ? "🎉 YOU WON! 🎉" : "💥 YOU LOST 💥"}
-            </div>
+                {props.status === 'playing' 
+                    ? `${props.remaining} Remaining` 
+                    : props.status === 'won' 
+                    ? "🎉 YOU WON! 🎉" 
+                    : props.status === 'firstClickInsurance'
+                        ? "✨ First Click Insurance! ✨" 
+                        : "💥 YOU LOST 💥"}
+                </div>
+
                 <div className='action-buttons'>
                     <div className='button-wide mt-50 main-button' onClick={props.play}>
                         <p>{props.status !== 'playing' ? "Play Again" : "Reset"}</p>
