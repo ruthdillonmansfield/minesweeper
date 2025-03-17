@@ -19,6 +19,7 @@ export class Game extends Component {
             activeDifficulty: 'normal',
             instructions: false,
             remaining: isSmallScreen ? 8 : 12,
+            firstClick: true
         };
         this.sweep = this.sweep.bind(this)
         this.play = this.play.bind(this)
@@ -31,6 +32,8 @@ export class Game extends Component {
         this.updateFlag = this.updateFlag.bind(this)
         this.reset = this.reset.bind(this)
         this.toggleInstructions = this.toggleInstructions.bind(this)
+        this.moveMine = this.moveMine.bind(this)
+        
     }
     render() {
         let content = (
@@ -93,7 +96,14 @@ export class Game extends Component {
         if (flag || this.state.status !== "playing") {
             return;
         }
-        const updatedGrid = check(grid, click);
+        let updatedGrid = [...grid];
+
+        if (this.state.firstClick && mine) {
+            updatedGrid = this.moveMine(updatedGrid, click); 
+            mine = false; 
+        }
+    
+        updatedGrid = check(updatedGrid, click);
         let countRemaining = 0;
         for (let i = 0; i < updatedGrid.grid.length; i++) {
             for (let j = 0; j < updatedGrid.grid[i].length; j++) {
@@ -116,15 +126,38 @@ export class Game extends Component {
         }
         this.setState({
             grid: updatedGrid.grid,
-            status: mine ? 'lost' : 'playing'
+            status: mine ? 'lost' : 'playing',
+            firstClick: false
         })
     }
+    moveMine(grid, click) {
+        let [row, col] = click;
+        
+        let emptyCells = [];
+        for (let i = 0; i < grid.length; i++) {
+            for (let j = 0; j < grid[i].length; j++) {
+                if (!grid[i][j].mine && (i !== row || j !== col)) {
+                    emptyCells.push([i, j]);
+                }
+            }
+        }
+
+        if (emptyCells.length > 0) {
+            let [newRow, newCol] = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            grid[newRow][newCol].mine = true;
+            grid[row][col].mine = false;
+        }
+    
+        return grid;
+    }
+    
     play () {
         this.setState({
             grid: generator(this.state.width, this.state.height, this.state.mines),
             setup: false,
             remaining: this.state.mines,
-            status: 'playing'
+            status: 'playing',
+            firstClick: true
         })
     }
     updateSize (w, h, size) {
@@ -224,7 +257,8 @@ export class Game extends Component {
         this.setState({
             setup: true,
             remaining: this.state.mines,
-            status: 'playing'
+            status: 'playing',
+            firstClick: true
         })
     }
     toggleInstructions () {
