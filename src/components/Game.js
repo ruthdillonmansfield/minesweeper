@@ -9,7 +9,7 @@ export class Game extends Component {
     super(props);
     const isSmallScreen = window.innerWidth < 800;
     const maxWidth = Math.round((window.innerWidth - 60) / 44 > 10 ? (window.innerWidth - 60) / 44 : 0);
-    const maxHeight = Math.round((window.innerHeight - 80) / 44 ? (window.innerHeight - 80) / 44 : 0);
+    const maxHeight = Math.round((window.innerHeight - 80) / 44 > 10 ? (window.innerHeight - 80) / 44 : 0);
     this.state = {
       grid: [],
       width: isSmallScreen ? 6 : 10,
@@ -31,7 +31,10 @@ export class Game extends Component {
       gameGuessInsurance: 0,
       firstClickInsuranceActive: false,
       guessInsuranceActive: false,
-      insuredCell: null
+      insuredCell: null,
+      // New timer state: if timerOn is false, we count up from 0; if true, we count down.
+      timerOn: false, // default "off" (count up)
+      time: 0
     };
     this.sweep = this.sweep.bind(this);
     this.play = this.play.bind(this);
@@ -49,112 +52,13 @@ export class Game extends Component {
     this.moveMine = this.moveMine.bind(this);
     this.updateGuessInsurance = this.updateGuessInsurance.bind(this);
     this.revealCell = this.revealCell.bind(this);
+    this.timerInterval = null;
   }
 
-  render() {
-    let content = (
-      <Setup
-        play={this.play}
-        width={this.state.width}
-        height={this.state.height}
-        mines={this.state.mines}
-        updateSize={this.updateSize}
-        updateDifficulty={this.updateDifficulty}
-        customise={this.customise}
-        custom={this.state.custom}
-        activeSize={this.state.activeSize}
-        activeDifficulty={this.state.activeDifficulty}
-        updateHeight={this.updateHeight}
-        updateWidth={this.updateWidth}
-        updateMines={this.updateMines}
-        toggleInstructions={this.toggleInstructions}
-        toggleInsuranceInstructions={this.toggleInsuranceInstructions}
-        updateGuessInsurance={this.updateGuessInsurance}
-        defaultGuessInsurance={this.state.defaultGuessInsurance}
-        maxWidth={this.state.maxWidth}
-        maxHeight={this.state.maxHeight}
-        maxMines={this.state.maxMines}
-        />
-    );
-    if (!this.state.setup) {
-      content = (
-        <Grid
-          grid={this.state.grid}
-          sweep={this.sweep}
-          status={this.state.status}
-          updateFlag={this.updateFlag}
-          reset={this.reset}
-          mines={this.state.mines}
-          play={this.play}
-          remaining={this.state.remaining}
-          firstClickInsuranceActive={this.state.firstClickInsuranceActive}
-          guessInsuranceActive={this.state.guessInsuranceActive}
-          insuredCell={this.state.insuredCell}
-          defaultInsurance={this.state.defaultGuessInsurance}
-          onImDone={this.handleImDone}
-          gameGuessInsurance={this.state.gameGuessInsurance}
-        />
-      );
-    }
-    if (this.state.instructions) {
-      content = (
-        <div className='instructions'>
-          <h2>HOW TO PLAY</h2>
-          <p>
-            <strong>Your goal</strong> is to reveal all safe cells without hitting a mine.
-          </p>
-          <p>
-            <strong>Numbers</strong> tell you how many mines are <em>next to a cell</em> (even diagonally).
-          </p>
-          <p>
-            <strong>Hit a mine?</strong> Game over! 💥
-          </p>
-          <p>
-            <strong>Right-click (press and hold on mobile) to flag suspected mines</strong> and plan your moves.
-          </p>
-          <p>
-            <strong>Starter Shield:</strong> Your very first click is always safe—any mine hit on day one is automatically moved.
-          </p>
-          <p>
-            <strong>Bomb Bailout:</strong> Later on, if you click an unexpected mine (one not obvious from the clues), Bomb Bailout gives you a second chance.
-          </p>
-          <p>
-            <strong>Clear all non-mine cells to win!</strong>
-          </p>
-          <div className='buttons'>
-            <div className='button-wide mt-50' onClick={this.toggleInstructions}>
-              <p>Got it!</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    if (this.state.insuranceInstructions) {
-      content = (
-        <div className='instructions'>
-          <h2>How Bomb Bailout Works</h2>
-      <p>
-        <strong>Bomb Bailout</strong> gives you a lifeline on those unlucky clicks where the mine’s hiding spot was a complete mystery.
-      </p>
-      <p>
-        Once you're out of Bomb Bailouts, the very next mine you click will blow everything up and end your run.
-      </p>
-      <p>
-        And remember: if the numbers clearly point to a mine, even Bomb Bailout won’t save you!
-      </p>
-      <p>
-        <strong>Starter Shield:</strong> Your very first click is on the house – if you hit a mine on day one, you're shielded so you can begin your adventure unscathed.
-      </p>
-
-          <div className='buttons'>
-            <div className='button-wide mt-50' onClick={this.toggleInsuranceInstructions}>
-              <p>Got it!</p>
-            </div>
-          </div>
-        </div>
-      );
-    }
-    return <div>{content}</div>;
+  // When the component unmounts, clear the timer interval
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+    this.stopTimer();
   }
 
   componentDidMount() {
@@ -162,8 +66,11 @@ export class Game extends Component {
     this.handleResize(); 
   }
   
-  componentWillUnmount() {
-    window.removeEventListener('resize', this.handleResize);
+  // When game status changes from "playing" to something else, stop the timer
+  componentDidUpdate(prevProps, prevState) {
+    if (prevState.status === "playing" && this.state.status !== "playing") {
+      this.stopTimer();
+    }
   }
   
   handleResize = () => {
@@ -199,6 +106,10 @@ export class Game extends Component {
   sweep(grid, click, mine, flag) {
     if (flag || this.state.status !== "playing") {
       return;
+    }
+
+    if (this.state.firstClick) {
+      this.startTimer();
     }
     let updatedGrid = [...grid];
     const [row, col] = click;
@@ -277,7 +188,7 @@ export class Game extends Component {
       return;
     }
 
-    //Normal
+    // Normal move
     updatedGrid = check(updatedGrid, click);
     result = updatedGrid.result;
     updatedGrid = computeKnowable(updatedGrid);
@@ -338,7 +249,71 @@ export class Game extends Component {
     return moveMine(grid, click);
   }
 
+  computeInitialTime() {
+    const { width, height, activeDifficulty } = this.state;
+    // Base: half a second per cell (adjust this multiplier as needed)
+    let baseTime = width * height * 1;
+    switch(activeDifficulty) {
+      case 'easy':
+        baseTime *= 1.5;
+        break;
+      case 'normal':
+        baseTime *= 1.4;
+        break;
+      case 'hard':
+        baseTime *= 1.2;
+        break;
+      case 'crazy':
+        baseTime *= 1;
+        break;
+      default:
+        baseTime *= 1;
+    }
+    return Math.ceil(baseTime);
+  }
+
+  // Starts the timer interval. If timerOn is true the timer counts down,
+  // otherwise it counts up.
+  startTimer() {
+    // Clear any existing timer
+    if (this.timerInterval) clearInterval(this.timerInterval);
+    let initialTime = 0;
+    if (this.state.timerOn) {
+      initialTime = this.computeInitialTime();
+    }
+    this.setState({ time: initialTime });
+    this.timerInterval = setInterval(() => {
+      this.setState(prevState => {
+        if (!prevState.timerOn) {
+          // Count up mode
+          return { time: prevState.time + 1 };
+        } else {
+          // Countdown mode: if time reaches 0, lose the game.
+          if (prevState.time <= 1) {
+            clearInterval(this.timerInterval);
+            return { time: 0, status: 'lost' };
+          }
+          return { time: prevState.time - 1 };
+        }
+      });
+    }, 1000);
+  }
+
+  // Stops the timer interval.
+  stopTimer() {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  updateTimer(value) {
+    this.setState({ timerOn: value });
+  }
+
+  // Starts a new game and resets the timer accordingly.
   play() {
+    this.stopTimer();
     this.setState({
       grid: generator(this.state.width, this.state.height, this.state.mines),
       setup: false,
@@ -346,7 +321,8 @@ export class Game extends Component {
       status: 'playing',
       firstClick: true,
       gameGuessInsurance: this.state.defaultGuessInsurance,
-      insuredCell: null
+      insuredCell: null,
+      time: this.state.timerOn ? this.computeInitialTime() : 0
     });
   }
 
@@ -488,11 +464,13 @@ export class Game extends Component {
   }
 
   reset() {
+    this.stopTimer();
     this.setState({
       setup: true,
       remaining: this.state.mines,
       status: 'playing',
-      firstClick: true
+      firstClick: true,
+      time: 0
     });
   }
 
@@ -510,6 +488,116 @@ export class Game extends Component {
     this.setState({
       insuranceInstructions: !this.state.insuranceInstructions
     });
+  }
+
+  render() {
+    let content = (
+      <Setup
+        play={this.play}
+        width={this.state.width}
+        height={this.state.height}
+        mines={this.state.mines}
+        updateSize={this.updateSize}
+        updateDifficulty={this.updateDifficulty}
+        customise={this.customise}
+        custom={this.state.custom}
+        activeSize={this.state.activeSize}
+        activeDifficulty={this.state.activeDifficulty}
+        updateHeight={this.updateHeight}
+        updateWidth={this.updateWidth}
+        updateMines={this.updateMines}
+        toggleInstructions={this.toggleInstructions}
+        toggleInsuranceInstructions={this.toggleInsuranceInstructions}
+        updateGuessInsurance={this.updateGuessInsurance}
+        defaultGuessInsurance={this.state.defaultGuessInsurance}
+        maxWidth={this.state.maxWidth}
+        maxHeight={this.state.maxHeight}
+        maxMines={this.state.maxMines}
+        timerOn={this.state.timerOn}
+        updateTimer={this.updateTimer.bind(this)}
+      />
+    );
+    if (!this.state.setup) {
+      content = (
+        <Grid
+          grid={this.state.grid}
+          sweep={this.sweep}
+          status={this.state.status}
+          updateFlag={this.updateFlag}
+          reset={this.reset}
+          mines={this.state.mines}
+          play={this.play}
+          remaining={this.state.remaining}
+          firstClickInsuranceActive={this.state.firstClickInsuranceActive}
+          guessInsuranceActive={this.state.guessInsuranceActive}
+          insuredCell={this.state.insuredCell}
+          defaultInsurance={this.state.defaultGuessInsurance}
+          onImDone={this.handleImDone}
+          gameGuessInsurance={this.state.gameGuessInsurance}
+          // Pass the timer props so the Grid can display them if needed
+          time={this.state.time}
+          timerOn={this.state.timerOn}
+        />
+      );
+    }
+    if (this.state.instructions) {
+      content = (
+        <div className='instructions'>
+          <h2>HOW TO PLAY</h2>
+          <p>
+            <strong>Your goal</strong> is to reveal all safe cells without hitting a mine.
+          </p>
+          <p>
+            <strong>Numbers</strong> tell you how many mines are <em>next to a cell</em> (even diagonally).
+          </p>
+          <p>
+            <strong>Hit a mine?</strong> Game over! 💥
+          </p>
+          <p>
+            <strong>Right-click (press and hold on mobile) to flag suspected mines</strong> and plan your moves.
+          </p>
+          <p>
+            <strong>Starter Shield:</strong> Your very first click is always safe—any mine hit on day one is automatically moved.
+          </p>
+          <p>
+            <strong>Bomb Bailout:</strong> Later on, if you click an unexpected mine (one not obvious from the clues), Bomb Bailout gives you a second chance.
+          </p>
+          <p>
+            <strong>Clear all non-mine cells to win!</strong>
+          </p>
+          <div className='buttons'>
+            <div className='button-wide mt-50' onClick={this.toggleInstructions}>
+              <p>Got it!</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    if (this.state.insuranceInstructions) {
+      content = (
+        <div className='instructions'>
+          <h2>How Bomb Bailout Works</h2>
+          <p>
+            <strong>Bomb Bailout</strong> gives you a lifeline on those unlucky clicks where the mine’s hiding spot was a complete mystery.
+          </p>
+          <p>
+            Once you're out of Bomb Bailouts, the very next mine you click will blow everything up and end your run.
+          </p>
+          <p>
+            And remember: if the numbers clearly point to a mine, even Bomb Bailout won’t save you!
+          </p>
+          <p>
+            <strong>Starter Shield:</strong> Your very first click is on the house – if you hit a mine on day one, you're shielded so you can begin your adventure unscathed.
+          </p>
+          <div className='buttons'>
+            <div className='button-wide mt-50' onClick={this.toggleInsuranceInstructions}>
+              <p>Got it!</p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+    return <div>{content}</div>;
   }
 }
 

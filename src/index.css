@@ -27,6 +27,8 @@ h1 {
   letter-spacing: 12px;
   text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
   margin: 20px 0;
+  z-index: 100;
+  position: relative;
 }
 
 h2, h3 {
@@ -78,14 +80,46 @@ h2, h3 {
   }
 }
 
+@keyframes softGlow {
+  0%, 100% {
+    border-color: #32cd32;
+    box-shadow: 0 0 100vw 0 rgba(50, 205, 50, 0.6);
+  }
+  25% {
+    border-color: #7CFC00;
+    box-shadow: 0 0 400px 400px rgba(124, 252, 0, 0.6);
+  }
+}
+
 .grid-container.win {
-  border-color: #32cd32;
-  box-shadow: 0 0 20px rgba(50, 205, 50, 0.6);
+  animation: softGlow 15s infinite;
+}
+
+@keyframes flashGlow {
+  0%, 100% {
+    border-color: #ff4d4d;
+    box-shadow: 0 0 50px rgba(255, 77, 77, 0.6);
+  }
+  0.5% {
+    border-color: #ff0000;
+    box-shadow: 0 0 200vw 200vw rgba(255, 0, 0, 1);
+  }
+  2% {
+    border-color: #ff0000;
+    box-shadow: 0 0 100px 50px rgba(255, 77, 77, 0.8);
+  }
+  3% {
+    border-color: #ff0000;
+    box-shadow: 0 0 140px 80px rgba(255, 0, 0, 1);
+  }
+  7% {
+    border-color: #ff0000;
+    box-shadow: 0 0 100px rgba(255, 77, 77, 0.8);
+  }
 }
 
 .grid-container.lose {
-  border-color: #ff4d4d;
-  box-shadow: 0 0 20px rgba(255, 77, 77, 0.6);
+  animation: flashGlow 100s infinite;
 }
 
 .grid {
@@ -361,12 +395,17 @@ h2, h3 {
   transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
 }
 /* Container for the two inline status boxes */
-.status-two-boxes {
+.status-two-boxes, .status-three-boxes {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 15px 0;
   margin-top: 20px;
+}
+
+.status-three-boxes .status-box {
+  width: 33.333%;
+  min-width: 100px;
 }
 
 .status-box {
@@ -387,7 +426,7 @@ h2, h3 {
   background: #d5cccc;
 }
 @media (max-width: 800px) {
-  .status-two-boxes {
+  .status-two-boxes, .status-three-boxes {
     flex-direction: column;
     gap: 14px;
     width: 100%;
@@ -411,11 +450,24 @@ h2, h3 {
   font-size: 14px;
   opacity: 0.8;
   margin: 0;
+  line-height: 14px;
 }
 
 /* Mines box styling: grey gradient */
 .mines-box {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.timer-box {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.timer-box.timer-low {
+  background: linear-gradient(135deg, #ff4d4d, #b22222);
+}
+
+.timer-box.timer-lower {
+  background: linear-gradient(135deg, #b22222, #6a0808);
 }
 
 .mines-box.main-button {
@@ -592,4 +644,66 @@ input::placeholder {
 
 .im-done-button:hover {
   background: #b22222;
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  gap: 10px;
+}
+
+.toggle-text {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Slider toggle styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0;
+  right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px; width: 26px;
+  left: 4px; bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+/* Rounded slider */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
 }

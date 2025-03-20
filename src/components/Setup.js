@@ -85,6 +85,19 @@ const Setup = props => {
                 </div>
             </div>
 
+            <div className="toggle-container">
+            <span className="toggle-text">TIME LIMIT</span>
+            <label className="switch">
+                <input
+                type="checkbox"
+                checked={props.timerOn}
+                onChange={(e) => props.updateTimer(e.target.checked)}
+                />
+                <span className="slider round"></span>
+            </label>
+            </div>
+
+
             {/* ACTION BUTTONS */}
             <div className='action-buttons'>
                 <div className='button-wide mt-50 main-button' onClick={props.play}>
