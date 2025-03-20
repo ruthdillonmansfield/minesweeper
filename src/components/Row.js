@@ -14,6 +14,8 @@ const Row = props => {
                 sweep={props.sweep}
                 status={props.status}
                 updateFlag={props.updateFlag}
+                insuredCell={props.insuredCell}  
+                insurance={props.insurance}
             />
         )
     })

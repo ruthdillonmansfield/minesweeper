@@ -24,12 +24,14 @@ const Cell = props => {
         color = 'green';
     }
 
-    // Add a special class for cells that just had a mine removed
-    const animationClass = props.cell.removedMine ? 'mine-removed' : '';
-
+    // Determine if this cell is the insured cell (using props.insuredCell, props.row, and props.column)
+    const isInsured = props.insuredCell &&
+                      props.insuredCell[0] === props.row &&
+                      props.insuredCell[1] === props.column &&
+                      props.insurance
     return (
         <div 
-            className={`cell ${color} ${props.cell.revealed ? "" : "cell-secret"} ${animationClass}`}
+            className={`cell ${color} ${props.cell.revealed ? "" : "cell-secret"} ${isInsured ? "insurance" : ""} ${props.status === "lost" || props.status === "won" ? "static" : ""}`}
             onClick={props.sweep.bind(null, props.grid, [props.row, props.column], props.cell.mine, props.cell.flag)}
             onContextMenu={props.updateFlag.bind(null, props.row, props.column)}
         >

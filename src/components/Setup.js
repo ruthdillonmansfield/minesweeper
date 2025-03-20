@@ -1,11 +1,11 @@
 import React from 'react';
-import propTypes from 'prop-types';
 import Form from './Form';
 
-const Setup = props => {    
+const Setup = props => { 
     return (
         <div className="Game">
-            <h2 class='mb-0 mt-50'>GRID SIZE</h2>
+            {/* GRID SIZE */}
+            <h2 className=''>GRID SIZE</h2>
             <div className='buttons setup-buttons'>
                 <div className={`button sm ${props.activeSize === 'small' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 5, 6, 'small')}>
                     <p>SMALL</p>
@@ -19,17 +19,19 @@ const Setup = props => {
                 <div className={`button lg ${props.activeSize === 'medium' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 10, 10, 'medium')}>
                     <p>MEDIUM</p>
                 </div>
-                <div className={`button lg ${props.activeSize === 'large' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 18, 15, 'large')}>
+                <div className={`button lg ${props.activeSize === 'large' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 15, 10, 'large')}>
                     <p>LARGE</p>
                 </div>
-                <div className={`button lg ${props.activeSize === 'huge' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 25, 18, 'huge')}>
+                <div className={`button lg ${props.activeSize === 'huge' ? 'active' : ''}`} onClick={props.updateSize.bind(null, 24, 14, 'huge')}>
                     <p>HUGE</p>
                 </div>
                 <div className={`button lg ${props.activeSize === 'custom' ? 'active' : ''}`} onClick={props.customise.bind(null, 'size')}>
                     <p>CUSTOM</p>
                 </div>
             </div>
-            <h2 class='mb-0 mt-50'>DIFFICULTY</h2>
+
+            {/* DIFFICULTY */}
+            <h2 className=''>DIFFICULTY</h2>
             <div className='buttons setup-buttons'>
                 <div className={`button ${props.activeDifficulty === 'easy' ? 'active' : ''}`} onClick={props.updateDifficulty.bind(null, 'easy')}>
                     <p>EASY</p>
@@ -47,14 +49,43 @@ const Setup = props => {
                     <p>CUSTOM</p>
                 </div>
             </div>
-            {props.custom ? <Form 
-                height={props.height}
-                width={props.width}
-                mines={props.mines}
-                updateHeight={props.updateHeight}
-                updateWidth={props.updateWidth}
-                updateMines={props.updateMines}
-            /> : ''}
+
+            {props.custom ? (
+                <Form 
+                    height={props.height}
+                    width={props.width}
+                    mines={props.mines}
+                    updateHeight={props.updateHeight}
+                    updateWidth={props.updateWidth}
+                    updateMines={props.updateMines}
+                    maxWidth={props.maxWidth}
+                    maxHeight={props.maxHeight}
+                    maxMines={props.maxMines}
+                />
+            ) : null}
+
+            {/* GUESS INSURANCE */}
+            <div className="info-heading">
+                <h2 className="mb-0">BOMB BAILOUT</h2>
+                <span className="info-button" onClick={props.toggleInsuranceInstructions}>i</span>
+            </div>
+
+            <div className='buttons setup-buttons'>
+                <div className={`button ${props.defaultGuessInsurance == '0' ? 'active' : ''}`} onClick={props.updateGuessInsurance.bind(null, 0)}>
+                    <p>OFF</p>
+                </div>
+                <div className={`button ${props.defaultGuessInsurance == '1' ? 'active' : ''}`} onClick={props.updateGuessInsurance.bind(null, 1)}>
+                    <p>1</p>
+                </div>
+                <div className={`button ${props.defaultGuessInsurance == '2' ? 'active' : ''}`} onClick={props.updateGuessInsurance.bind(null, 2)}>
+                    <p>2</p>
+                </div>
+                <div className={`button lg ${props.defaultGuessInsurance == '3' ? 'active' : ''}`} onClick={props.updateGuessInsurance.bind(null, 3)}>
+                    <p>3</p>
+                </div>
+            </div>
+
+            {/* ACTION BUTTONS */}
             <div className='action-buttons'>
                 <div className='button-wide mt-50 main-button' onClick={props.play}>
                     <p>GO</p>
@@ -66,9 +97,5 @@ const Setup = props => {
         </div>
     );
 };
-
-// Setup.propTypes = {
-//   setGame: propTypes.any.isRequired
-// };
 
 export default Setup;

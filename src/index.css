@@ -5,7 +5,7 @@
 body {
   margin: 0;
   padding: 10px;
-  font-family: 'Quicksand', sans-serif;
+  font-family: 'Kanit', sans-serif;
   background: linear-gradient(135deg, #2a3444, #2a5298);
   color: white;
   display: flex;
@@ -26,6 +26,7 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 12px;
   text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  margin: 20px 0;
 }
 
 h2, h3 {
@@ -36,6 +37,11 @@ h2, h3 {
 
 .instructions p {
   font-size: 20px;
+  font-weight: 200;
+}
+
+.instructions strong {
+  font-weight: 500;
 }
 
 .grid-container {
@@ -105,6 +111,10 @@ h2, h3 {
   cursor: pointer;
   transition: all 0.2s;
   background: rgba(255, 255, 255, 0.1);
+}
+
+.cell.static {
+  cursor: default !important;
 }
 
 .cell-secret:hover {
@@ -269,7 +279,7 @@ h2, h3 {
   justify-content: center;
   align-items: center;
   gap: 15px;
-  margin-top: 30px;
+  margin-top: 20px;
 }
 
 .main-button {
@@ -308,14 +318,14 @@ h2, h3 {
 .status-message {
   font-size: 24px;
   font-weight: bold;
-  padding: 10px;
-  border-radius: 5px;
+  padding: 11px;
   letter-spacing: 2px;
-  margin-top: 15px;
-  min-height: 40px; /* Placeholder height to prevent jumping */
+  margin-top: 20px;
+  min-height: 50px; 
   display: flex;
   justify-content: center;
   align-items: center;
+  font-family: 'Kanit', sans-serif;
 }
 
 .status-message.playing {
@@ -326,7 +336,6 @@ h2, h3 {
   color: #fff;
   background: linear-gradient(135deg, #32cd32, #228b22);
   box-shadow: 0 0 15px rgba(50, 205, 50, 0.6);
-  padding: 15px;
   border-radius: 8px;
 }
 
@@ -334,38 +343,114 @@ h2, h3 {
   color: #fff;
   background: linear-gradient(135deg, #ff4d4d, #b22222);
   box-shadow: 0 0 15px rgba(255, 77, 77, 0.6);
-  padding: 15px;
   border-radius: 8px;
 }
 
-.status-message.firstClickInsurance {
+.status-message.main-button {
+  cursor: pointer;
+}
+
+.status-message.insurance {
   background: linear-gradient(45deg, #ff007f, #ff00ff);
   color: #fff;
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
   border: 2px solid #ff69b4;
+  padding: 10px;
   border-radius: 8px;
   transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
 }
+/* Container for the two inline status boxes */
+.status-two-boxes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px 0;
+  margin-top: 20px;
+}
 
-.mine-removed {
-  animation: shinyAnimation 3s ease-in-out;
+.status-box {
+  min-width: 180px;
+  min-height: 60px;
+  padding: 6px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Kanit', sans-serif;
+  text-transform: uppercase;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  color: #fff;
+  max-width: 280px;
+  width: 50%;
+  height: 50px;
+  background: #d5cccc;
+}
+@media (max-width: 800px) {
+  .status-two-boxes {
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+  }
+}
+
+/* Larger font for the top number/hearts */
+.status-number {
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 26px;
+  margin: 0;
+}
+
+.insurance-box .status-number {
+  color: #ff00ff;
+}
+
+/* Smaller label text below */
+.status-label {
+  font-size: 14px;
+  opacity: 0.8;
+  margin: 0;
+}
+
+/* Mines box styling: grey gradient */
+.mines-box {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.mines-box.main-button {
+  background: linear-gradient(135deg, #ffcc00, #ff8c00);
+  border-radius: 0;
+  color: #000;
+  cursor: pointer;
+}
+
+/* Insurance box styling: pink gradient */
+.insurance-box {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.insurance .insurance-box {
+  color: linear-gradient(45deg, #ff007f, #ff00ff);
+}
+
+.insurance {
+  animation: shinyAnimation 4s ease-in-out;
+  background: linear-gradient(45deg, #ff007f, #ff00ff);
 }
 
 @keyframes shinyAnimation {
   0% {
-    background-color: inherit;
     box-shadow: none;
   }
   50% {
-    background: linear-gradient(45deg, #ff007f, #ff00ff);
     box-shadow: 0 0 15px 5px rgba(255, 20, 147, 0.8);
   }
   100% {
-    background-color: inherit;
     box-shadow: none;
   }
 }
+
 
 
 @media (max-width: 800px) {
@@ -377,7 +462,7 @@ h2, h3 {
 }
 
 .instructions {
-  max-width: 450px;
+  max-width: 600px;
   background: rgba(255, 255, 255, 0.2);
   padding: 20px;
   border-radius: 10px;
@@ -391,7 +476,7 @@ form {
   align-items: center;
   gap: 15px;
   flex-wrap: wrap;
-  margin: 30px 0 40px 0;
+  margin: 20px 0;
 }
 
 .formField {
@@ -401,9 +486,14 @@ form {
 }
 
 .formField h5 {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 10px 0;
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0;
+}
+
+.formField .form-sub {
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 5px;
 }
 
 input {
@@ -425,7 +515,13 @@ input:focus {
 }
 
 input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@media (min-width: 400px) {
+  input {
+    width: 120px;
+  }
 }
 
 @media (max-width: 800px) {
@@ -438,4 +534,62 @@ input::placeholder {
   .sm {
     display: none;
   }
+}
+/* The container for heading + info button */
+.info-heading {
+  display: inline-flex;
+  align-items: center;  /* vertically center both h2 and the button */
+  gap: 8px;            /* optional space between heading and button */
+}
+
+/* The heading can keep its existing styles (e.g., .mb-0.mt-50) */
+
+/* The small circular “i” button */
+.info-button {
+  display: inline-flex;       /* ensures content is centered inside */
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0 0 0px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffcc00;        /* your desired background color */
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;             /* avoid tall ascenders messing up alignment */
+  cursor: pointer;
+
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: transform 0.2s ease;
+}
+
+.info-button:hover {
+  transform: scale(1.1);
+}
+
+.mb-0 {margin-bottom: 0;}
+
+.im-done-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.im-done-button {
+  background: #ff4d4d;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 0 15px rgba(255, 77, 77, 0.6);
+  transition: background 0.3s ease;
+}
+
+.im-done-button:hover {
+  background: #b22222;
 }
