@@ -592,7 +592,7 @@ input::placeholder {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  margin: 20px 0 0 0px;
+  margin: 10px 0 0 0px;
   width: 24px;
   height: 24px;
   border-radius: 50%;
