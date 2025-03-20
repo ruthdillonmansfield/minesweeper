@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-
 body {
   margin: 0;
   padding: 10px;
@@ -37,6 +36,10 @@ h2, h3 {
   letter-spacing: 8px;
 }
 
+h2 {
+  margin: 10px 0;
+}
+
 .instructions p {
   font-size: 20px;
   font-weight: 200;
@@ -54,9 +57,9 @@ h2, h3 {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(5px);
   position: relative;
-  min-height: 450px; /* Prevents jumping when win/lose message appears */
-  margin: 0 0 40px; /* Fixes position from top */
-  border: 5px solid transparent; /* Invisible border to prevent layout shift */
+  min-height: 450px;
+  margin: 0 0 40px;
+  border: 5px solid transparent;
   box-sizing: border-box;
 }
 
@@ -224,8 +227,6 @@ h2, h3 {
   margin-top: 15px;
 }
 
-
-
 .setup-buttons {
   display: flex;
   justify-content: center;
@@ -236,12 +237,12 @@ h2, h3 {
 
 .button {
   width: 100px;
-  height: 50px;
+  height: 40px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   background: #d5cccc;
-  margin: 10px 0 10px 0; 
+  margin: 10px 0 10px 0;
   font-size: 16px;
   -webkit-transition: width 0.4s ease-in-out;
   -moz-transition: width 0.4s ease-in-out;
@@ -256,7 +257,6 @@ h2, h3 {
 
 .button.active, .button.active:hover {
   background: linear-gradient(135deg, #ffb300, #e67e00);
-
   color: white;
 }
 
@@ -348,14 +348,13 @@ h2, h3 {
   transform: scale(1.05);
 }
 
-
 .status-message {
   font-size: 24px;
   font-weight: bold;
   padding: 11px;
   letter-spacing: 2px;
   margin-top: 20px;
-  min-height: 50px; 
+  min-height: 50px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -394,7 +393,7 @@ h2, h3 {
   border-radius: 8px;
   transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
 }
-/* Container for the two inline status boxes */
+
 .status-two-boxes, .status-three-boxes {
   display: flex;
   justify-content: center;
@@ -425,6 +424,7 @@ h2, h3 {
   height: 50px;
   background: #d5cccc;
 }
+
 @media (max-width: 800px) {
   .status-two-boxes, .status-three-boxes {
     flex-direction: column;
@@ -433,7 +433,6 @@ h2, h3 {
   }
 }
 
-/* Larger font for the top number/hearts */
 .status-number {
   font-size: 24px;
   font-weight: bold;
@@ -445,7 +444,6 @@ h2, h3 {
   color: #ff00ff;
 }
 
-/* Smaller label text below */
 .status-label {
   font-size: 14px;
   opacity: 0.8;
@@ -453,7 +451,6 @@ h2, h3 {
   line-height: 14px;
 }
 
-/* Mines box styling: grey gradient */
 .mines-box {
   background: rgba(255, 255, 255, 0.2);
 }
@@ -477,7 +474,6 @@ h2, h3 {
   cursor: pointer;
 }
 
-/* Insurance box styling: pink gradient */
 .insurance-box {
   background: rgba(255, 255, 255, 0.2);
 }
@@ -503,10 +499,8 @@ h2, h3 {
   }
 }
 
-
-
 @media (max-width: 800px) {
-  .status-message, .status-message.lost, .status-message.won{
+  .status-message, .status-message.lost, .status-message.won {
     font-size: 18px;
     padding: 10px;
     min-height: 35px;
@@ -578,7 +572,7 @@ input::placeholder {
 
 @media (max-width: 800px) {
   .lg {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -587,31 +581,27 @@ input::placeholder {
     display: none;
   }
 }
-/* The container for heading + info button */
+
 .info-heading {
   display: inline-flex;
-  align-items: center;  /* vertically center both h2 and the button */
-  gap: 8px;            /* optional space between heading and button */
+  align-items: center;
+  gap: 8px;
 }
 
-/* The heading can keep its existing styles (e.g., .mb-0.mt-50) */
-
-/* The small circular “i” button */
 .info-button {
-  display: inline-flex;       /* ensures content is centered inside */
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   margin: 20px 0 0 0px;
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #ffcc00;        /* your desired background color */
+  background: #ffcc00;
   color: #333;
   font-size: 14px;
   font-weight: bold;
-  line-height: 1;             /* avoid tall ascenders messing up alignment */
+  line-height: 1;
   cursor: pointer;
-
   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
   transition: transform 0.2s ease;
 }
@@ -620,7 +610,9 @@ input::placeholder {
   transform: scale(1.1);
 }
 
-.mb-0 {margin-bottom: 0;}
+.mb-0 {
+  margin-bottom: 0;
+}
 
 .im-done-container {
   display: flex;
@@ -659,7 +651,6 @@ input::placeholder {
   font-weight: bold;
 }
 
-/* Slider toggle styles */
 .switch {
   position: relative;
   display: inline-block;
@@ -676,19 +667,23 @@ input::placeholder {
 .slider {
   position: absolute;
   cursor: pointer;
-  top: 0; left: 0;
-  right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 .slider:before {
   position: absolute;
   content: "";
-  height: 26px; width: 26px;
-  left: 4px; bottom: 4px;
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
@@ -699,11 +694,62 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
-/* Rounded slider */
 .slider.round {
   border-radius: 34px;
 }
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.toggle-inline-group .toggle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 10px;
+}
+
+.toggle-inline-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.toggle-inline-group .info-button {
+  margin: 0 0 0 5px;
+}
+
+.toggle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 100px;
+}
+
+.toggle-label-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.toggle-text {
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 2px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+
+.collapsible {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 1.2s ease;
+}
+
+.collapsible.open {
+  max-height: 500px;
 }

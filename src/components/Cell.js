@@ -17,11 +17,9 @@ const Cell = props => {
     }
     if (props.status === 'lost' && props.cell.mine) {
         contents = <img src='./mine.png' alt='mine' className='mine'/>;
-        color = 'red';
     }
     if (props.status === 'won' && props.cell.mine) {
         contents = <img src='./mine.png' alt='mine' className='mine'/>;
-        color = 'green';
     }
 
     // Determine if this cell is the insured cell (using props.insuredCell, props.row, and props.column)

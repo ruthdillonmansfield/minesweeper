@@ -73,7 +73,7 @@ const Grid = props => {
                 : ''}
             </p>
             <p className="status-label">
-              {props.gameGuessInsurance > 0 ? "Bomb Bailouts" : "No Bailouts Left"}
+              { props.guessInsuranceActive ? "BAILED OUT" : props.gameGuessInsurance > 0 ? "Bomb Bailouts" : "No Bailouts Left"}
             </p>
           </div>
         )}

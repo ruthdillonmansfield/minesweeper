@@ -18,6 +18,8 @@ export class Game extends Component {
       status: 'playing',
       setup: true,
       custom: false,
+      usingFirstClickInsurance: true,
+      usingGuessInsurance: false,
       activeSize: isSmallScreen ? 'large' : 'medium',
       activeDifficulty: 'normal',
       instructions: false,
@@ -32,15 +34,16 @@ export class Game extends Component {
       firstClickInsuranceActive: false,
       guessInsuranceActive: false,
       insuredCell: null,
-      // New timer state: if timerOn is false, we count up from 0; if true, we count down.
       timerOn: false, // default "off" (count up)
       time: 0
     };
+
     this.sweep = this.sweep.bind(this);
     this.play = this.play.bind(this);
     this.updateSize = this.updateSize.bind(this);
     this.updateDifficulty = this.updateDifficulty.bind(this);
     this.customise = this.customise.bind(this);
+    this.setInsurance = this.setInsurance.bind(this);
     this.updateWidth = this.updateWidth.bind(this);
     this.updateHeight = this.updateHeight.bind(this);
     this.updateMines = this.updateMines.bind(this);
@@ -386,6 +389,26 @@ export class Game extends Component {
     });
   }
 
+  setInsurance(type) {
+    if (type === "fc") {
+      this.setState({
+        usingFirstClickInsurance: !this.state.usingFirstClickInsurance
+      });
+    } else if (!this.state.usingGuessInsurance) {
+      this.setState({
+        usingGuessInsurance: !this.state.usingGuessInsurance,
+        defaultGuessInsurance: 1,
+        gameGuessInsurance: 1,
+      });
+    } else {
+      this.setState({
+        usingGuessInsurance: !this.state.usingGuessInsurance,
+        defaultGuessInsurance: 0,
+        gameGuessInsurance: 0,
+      });
+    }
+  }
+
   updateWidth(e) {
     let newWidth = e.target.value;
     if (!/([\D])/.test(newWidth) && newWidth < 41 && newWidth <= this.state.maxWidth) {
@@ -490,6 +513,7 @@ export class Game extends Component {
     });
   }
 
+
   render() {
     let content = (
       <Setup
@@ -502,6 +526,9 @@ export class Game extends Component {
         customise={this.customise}
         custom={this.state.custom}
         activeSize={this.state.activeSize}
+        setInsurance={this.setInsurance}
+        usingFirstClickInsurance={this.state.usingFirstClickInsurance}
+        usingGuessInsurance={this.state.usingGuessInsurance}
         activeDifficulty={this.state.activeDifficulty}
         updateHeight={this.updateHeight}
         updateWidth={this.updateWidth}
@@ -576,18 +603,19 @@ export class Game extends Component {
     if (this.state.insuranceInstructions) {
       content = (
         <div className='instructions'>
-          <h2>How Bomb Bailout Works</h2>
+          <h2>Starter Shields</h2>
           <p>
-            <strong>Bomb Bailout</strong> gives you a lifeline on those unlucky clicks where the mine’s hiding spot was a complete mystery.
+            <strong>You're protected for your very first guess.</strong> You can continue your search unscathed.
+          </p>
+          <h2>Bomb Bailouts</h2>
+          <p>
+            Bomb Bailouts give you a lifeline on unlucky search guesses.
+          </p>
+          <p>
+            But remember: if the numbers clearly pointed to a mine, even Bomb Bailout won’t save you!
           </p>
           <p>
             Once you're out of Bomb Bailouts, the very next mine you click will blow everything up and end your run.
-          </p>
-          <p>
-            And remember: if the numbers clearly point to a mine, even Bomb Bailout won’t save you!
-          </p>
-          <p>
-            <strong>Starter Shield:</strong> Your very first click is on the house – if you hit a mine on day one, you're shielded so you can begin your adventure unscathed.
           </p>
           <div className='buttons'>
             <div className='button-wide mt-50' onClick={this.toggleInsuranceInstructions}>
