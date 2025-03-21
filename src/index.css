@@ -532,13 +532,17 @@ form {
 }
 
 .formField h5 {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 400;
+  letter-spacing: 2px;
+  line-height: 1.5;
+  text-align: center;
+  text-transform: uppercase;
   margin: 0;
 }
 
 .formField .form-sub {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
   margin-bottom: 5px;
 }
 

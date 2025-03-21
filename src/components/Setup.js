@@ -157,7 +157,7 @@ const Setup = props => {
 
         <div className={`collapsible ${props.usingGuessInsurance ? 'open' : ''}`}>
   <div className="info-heading">
-    <h2 className="mb-0">BOMB BAILOUT</h2>
+    <h2 className="mb-0">BOMB BAILOUTS</h2>
     <span className="info-button" onClick={props.toggleInsuranceInstructions}>
       i
     </span>

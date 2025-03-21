@@ -83,9 +83,9 @@ export class Game extends Component {
     const maxHeight = Math.round(
       ((window.innerHeight - 80) / 44) > 10 ? ((window.innerHeight - 80) / 44) : 0
     );
-    const maxMines = Math.floor(
-      (maxWidth * maxHeight) * 0.5
-    );
+    const currentMax = Math.floor(this.state.width * this.state.height) * 0.5;
+    const max = Math.floor((maxWidth * maxHeight) * 0.5)
+    const maxMines = currentMax < max ? currentMax : max;
     this.setState({ maxWidth, maxHeight, maxMines });
   };
   
@@ -254,9 +254,8 @@ export class Game extends Component {
 
   computeInitialTime() {
     const { width, height, activeDifficulty } = this.state;
-    // Base: half a second per cell (adjust this multiplier as needed)
-    let baseTime = width * height * 1;
-    switch(activeDifficulty) {
+    let baseTime = width * height * 0.7;
+    switch (activeDifficulty) {
       case 'easy':
         baseTime *= 1.5;
         break;
@@ -264,21 +263,19 @@ export class Game extends Component {
         baseTime *= 1.4;
         break;
       case 'hard':
-        baseTime *= 1.2;
+        baseTime *= 1.4;
         break;
       case 'crazy':
-        baseTime *= 1;
+        baseTime *= 1.4;
         break;
       default:
         baseTime *= 1;
     }
-    return Math.ceil(baseTime);
+    return Math.ceil(baseTime / 10) * 10;
   }
+  
 
-  // Starts the timer interval. If timerOn is true the timer counts down,
-  // otherwise it counts up.
   startTimer() {
-    // Clear any existing timer
     if (this.timerInterval) clearInterval(this.timerInterval);
     let initialTime = 0;
     if (this.state.timerOn) {
@@ -288,10 +285,8 @@ export class Game extends Component {
     this.timerInterval = setInterval(() => {
       this.setState(prevState => {
         if (!prevState.timerOn) {
-          // Count up mode
           return { time: prevState.time + 1 };
         } else {
-          // Countdown mode: if time reaches 0, lose the game.
           if (prevState.time <= 1) {
             clearInterval(this.timerInterval);
             return { time: 0, status: 'lost' };
@@ -302,7 +297,6 @@ export class Game extends Component {
     }, 1000);
   }
 
-  // Stops the timer interval.
   stopTimer() {
     if (this.timerInterval) {
       clearInterval(this.timerInterval);
@@ -314,7 +308,6 @@ export class Game extends Component {
     this.setState({ timerOn: value });
   }
 
-  // Starts a new game and resets the timer accordingly.
   play() {
     this.stopTimer();
     this.setState({
@@ -349,7 +342,8 @@ export class Game extends Component {
       height: h,
       remaining: newMines,
       activeSize: size,
-      custom: false
+      custom: false,
+      activeDifficulty: this.state.custom ? "normal" : this.state.activeDifficulty
     });
   }
 
@@ -377,7 +371,8 @@ export class Game extends Component {
     this.setState({
       mines: newMines,
       activeDifficulty: difficulty,
-      custom: false
+      custom: false,
+      activeSize : this.state.custom ? "medium" : this.state.activeSize
     });
   }
 

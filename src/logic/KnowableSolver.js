@@ -1,15 +1,13 @@
-/**
- * Minesweeper hybrid solver using local logic and frontier enumeration
- * 1. Keep applying local logic:
- *    - If number of unknown neighbors equals mines needed, mark them as mines
- *    - If no mines are needed, mark them as safe
- * 2. Do a frontier enumeration pass to deduce more cells
- * 3. Repeat until no new deductions are made
- *
- * For each cell, set:
- * - cell.knowable: true if we can deduce its state, false otherwise
- * - cell.deducedValue: 1 if it's a mine, 0 if it's safe, null if ambiguous
- */
+//1. Keep applying local logic:
+// - If number of unknown neighbors equals mines needed, mark them as mines
+// - If no mines are needed, mark them as safe
+// 2. Do a frontier enumeration pass to deduce more cells
+// 3. Repeat until no new deductions are made
+//
+// For each cell, set:
+// - cell.knowable: true if we can deduce its state, false otherwise
+// - cell.deducedValue: 1 if it's a mine, 0 if it's safe, null if ambiguous
+//
 const computeKnowable = (grid) => {
   grid = grid.grid || grid
 
@@ -182,7 +180,7 @@ const globalEnumerationPass = (grid) => {
   }
 
   // Skip enumeration if there's no frontier or it's too large
-  const FRONTIER_THRESHOLD = 15
+  const FRONTIER_THRESHOLD = 20
   if (frontierCells.length === 0 || frontierCells.length > FRONTIER_THRESHOLD) {
     return false
   }
