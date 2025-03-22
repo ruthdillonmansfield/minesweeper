@@ -34,8 +34,20 @@ export class Game extends Component {
       firstClickInsuranceActive: false,
       guessInsuranceActive: false,
       insuredCell: null,
-      timerOn: false, // default "off" (count up)
-      time: 0
+      timerOn: false,
+      time: 0,
+      showStatsPopup: false,
+      quality: {
+        clicks: 0,
+        goodClicks: 0,
+        luckyClicks: 0,
+        failureProbability: 0,
+        revealed: 0,
+        totalCells: 0,
+        correctFlags: 0,
+        flags: 0,
+        bailouts: 0
+      }
     };
 
     this.sweep = this.sweep.bind(this);
@@ -52,9 +64,13 @@ export class Game extends Component {
     this.handleImDone = this.handleImDone.bind(this);
     this.toggleInstructions = this.toggleInstructions.bind(this);
     this.toggleInsuranceInstructions = this.toggleInsuranceInstructions.bind(this);
+    this.toggleStatsPopup = this.toggleStatsPopup.bind(this);
     this.moveMine = this.moveMine.bind(this);
     this.updateGuessInsurance = this.updateGuessInsurance.bind(this);
     this.revealCell = this.revealCell.bind(this);
+    this.trackGuess = this.trackGuess.bind(this);
+
+    
     this.timerInterval = null;
   }
 
@@ -116,6 +132,7 @@ export class Game extends Component {
     }
     let updatedGrid = [...grid];
     const [row, col] = click;
+    const quality = this.trackGuess(grid, row, col, this.state.quality)
     let result;
 
     // First-Click Insurance
@@ -252,6 +269,84 @@ export class Game extends Component {
     return moveMine(grid, click);
   }
 
+  trackGuess(grid, r, c, quality) {
+    const newQuality = {
+      clicks: quality.clicks,
+      goodClicks: quality.goodClicks,
+      luckyClicks: quality.luckyClicks,
+      failureProbability: quality.failureProbability,
+      revealed: quality.revealed,
+      totalCells: quality.totalCells,
+      correctFlags: quality.correctFlags,
+      flags: quality.flags,
+      bailouts: quality.bailouts
+    }
+    newQuality.clicks++;
+    const goodClickAvailable = grid.some(row => row.some(cell => cell.knowable));
+    
+    if ((!grid[r][c].mine && grid[r][c].knowable) || !goodClickAvailable) {
+      newQuality.goodClicks++;
+    } 
+    if (!grid[r][c].mine && !grid[r][c].knowable) {
+      newQuality.luckyClicks++;
+    }
+    let knownMines = grid.reduce((acc, row) => {
+      let rowCount = row.reduce((rowAcc, cell) => {
+        return rowAcc + ((cell.knowable && cell.mine) ? 1 : 0);
+      }, 0);
+      return acc + rowCount;
+    }, 0);
+    let correctFlags = grid.reduce((acc, row) => {
+      let rowCount = row.reduce((rowAcc, cell) => {
+        return rowAcc + ((cell.flag && cell.mine) ? 1 : 0);
+      }, 0);
+      return acc + rowCount;
+    }, 0);
+    let flags = grid.reduce((acc, row) => {
+      let rowCount = row.reduce((rowAcc, cell) => {
+        return rowAcc + (cell.flag ? 1 : 0);
+      }, 0);
+      return acc + rowCount;
+    }, 0);
+    let revealed = grid.reduce((acc, row) => {
+      let rowCount = row.reduce((rowAcc, cell) => {
+        return rowAcc + (cell.revealed ? 1 : 0);
+      }, 0);
+      return acc + rowCount;
+    }, 0);
+    const totalCells = this.state.width * this.state.height;
+
+    newQuality.correctFlags = correctFlags;
+    newQuality.flags = flags;
+    newQuality.totalCells = totalCells;
+    newQuality.revealed = Math.round((revealed / totalCells)*100);
+    newQuality.bailouts = this.state.defaultGuessInsurance - this.state.gameGuessInsurance;
+
+    let currentFailureProbability = ((this.state.mines - knownMines) / (totalCells - revealed));
+    if (grid[r][c].knowable) {
+      currentFailureProbability = 0;
+    }
+    console.log('curr is');
+    console.log(currentFailureProbability);
+    console.log('pre');
+    console.log(newQuality.failureProbability);
+      if (newQuality.failureProbability) {
+        console.log('fail prob is > 0');
+        newQuality.failureProbability =
+          ((newQuality.failureProbability * (newQuality.clicks - 1)) + currentFailureProbability) /
+          newQuality.clicks;
+      } else {
+        console.log('fail prob is 0');
+        newQuality.failureProbability = currentFailureProbability;
+      }
+    
+    
+    console.log(newQuality);
+    return this.setState({
+      quality: newQuality
+    })
+  }
+
   computeInitialTime() {
     const { width, height, activeDifficulty } = this.state;
     let baseTime = width * height * 0.7;
@@ -263,10 +358,10 @@ export class Game extends Component {
         baseTime *= 1.4;
         break;
       case 'hard':
-        baseTime *= 1.4;
+        baseTime *= 1.8;
         break;
       case 'crazy':
-        baseTime *= 1.4;
+        baseTime *= 2;
         break;
       default:
         baseTime *= 1;
@@ -308,6 +403,12 @@ export class Game extends Component {
     this.setState({ timerOn: value });
   }
 
+  toggleStatsPopup() {
+    this.setState(prevState => ({
+      showStatsPopup: !prevState.showStatsPopup
+    }));
+  }
+
   play() {
     this.stopTimer();
     this.setState({
@@ -318,7 +419,17 @@ export class Game extends Component {
       firstClick: true,
       gameGuessInsurance: this.state.defaultGuessInsurance,
       insuredCell: null,
-      time: this.state.timerOn ? this.computeInitialTime() : 0
+      time: this.state.timerOn ? this.computeInitialTime() : 0,
+      quality: {
+        clicks: 0,
+        goodClicks: 0,
+        luckyClicks: 0,
+        failureProbability: 0,
+        revealed: 0,
+        totalCells: 0,
+        correctFlags: 0,
+        flags: 0
+      }
     });
   }
 
@@ -488,7 +599,17 @@ export class Game extends Component {
       remaining: this.state.mines,
       status: 'playing',
       firstClick: true,
-      time: 0
+      time: 0,
+      quality: {
+        clicks: 0,
+        goodClicks: 0,
+        luckyClicks: 0,
+        failureProbability: 0,
+        revealed: 0,
+        totalCells: 0,
+        correctFlags: 0,
+        flags: 0
+      }
     });
   }
 
@@ -549,6 +670,7 @@ export class Game extends Component {
           reset={this.reset}
           mines={this.state.mines}
           play={this.play}
+          activeDifficulty={this.state.activeDifficulty}
           remaining={this.state.remaining}
           firstClickInsuranceActive={this.state.firstClickInsuranceActive}
           guessInsuranceActive={this.state.guessInsuranceActive}
@@ -556,9 +678,11 @@ export class Game extends Component {
           defaultInsurance={this.state.defaultGuessInsurance}
           onImDone={this.handleImDone}
           gameGuessInsurance={this.state.gameGuessInsurance}
-          // Pass the timer props so the Grid can display them if needed
+          toggleStatsPopup={this.toggleStatsPopup}
+          showStatsPopup={this.state.showStatsPopup}
           time={this.state.time}
           timerOn={this.state.timerOn}
+          quality={this.state.quality}
         />
       );
     }
