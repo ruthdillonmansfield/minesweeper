@@ -91,7 +91,6 @@ const Setup = props => {
         </div>
       </div>
 
-      {props.custom && (
         <Form
           height={props.height}
           width={props.width}
@@ -102,8 +101,8 @@ const Setup = props => {
           maxWidth={props.maxWidth}
           maxHeight={props.maxHeight}
           maxMines={props.maxMines}
+          custom={props.custom}
         />
-      )}
 
       <div className="toggle-inline-group">
         <div className="toggle-container lg">

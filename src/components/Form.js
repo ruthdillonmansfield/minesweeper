@@ -3,7 +3,7 @@ import propTypes from 'prop-types';
 
 const Form = props => {
     return (
-        <form>
+        <form className={`collapsible ${props.custom ? 'open' : ""}`}>
             <div className='formField'>
                 <h5>Width</h5>
                 <h5 className='form-sub'>{`Max. ${props.maxWidth}`}</h5>
