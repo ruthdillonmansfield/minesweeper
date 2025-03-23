@@ -1,6 +1,13 @@
 import React from 'react'
 import Form from './Form'
 
+const formatTime = (time) => {
+    const minutes = Math.floor(time / 60);
+    const seconds = time % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+  };
+  
+
 const Setup = props => {
   return (
     <div className="Game">
@@ -189,6 +196,35 @@ const Setup = props => {
       </div>
     </div>
   </div>
+
+  <div className={`collapsible timer-menu ${props.timerMenuOpen ? "open" : ""}`}>
+  <div className="info-heading">
+    <h2 className="mb-0">TIME LIMIT</h2>
+  </div>
+  <div className="buttons setup-buttons">
+  {props.timerOptions.map((option, i) => {
+    let name = "Recommended";
+    if (option.label === "Harder") {name = "Challenging"}
+    if (option.label === "Easier") {name = "Relaxed"}
+
+    return (
+  <div
+    key={i}
+    className={`button timer-option ${props.timerDifficulty === option.label ? 'active' : ''}`}
+    onClick={() => props.selectTimerOption({
+      time: option.time,
+      difficulty: option.label
+    })}
+  >
+    <p className="timer-main">{formatTime(option.time)}</p>
+    <p className="timer-label">{name}</p>
+  </div>
+)})
+}
+  </div>
+</div>
+
+
 
 
       <div className="action-buttons">

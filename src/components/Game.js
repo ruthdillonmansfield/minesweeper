@@ -14,7 +14,7 @@ export class Game extends Component {
       grid: [],
       width: isSmallScreen ? 6 : 10,
       height: isSmallScreen ? 8 : 10,
-      mines: isSmallScreen ? 8 : 12,
+      mines: isSmallScreen ? 8 : 15,
       status: 'playing',
       setup: true,
       custom: false,
@@ -35,7 +35,7 @@ export class Game extends Component {
       guessInsuranceActive: false,
       insuredCell: null,
       timerOn: false,
-      time: 0,
+      time: 90,
       showStatsPopup: false,
       quality: {
         clicks: 0,
@@ -47,7 +47,14 @@ export class Game extends Component {
         correctFlags: 0,
         flags: 0,
         bailouts: 0
-      }
+      },
+      timerMenuOpen: false,
+      timerDifficulty: "Recommended",
+      timerOptions: [
+        { time: 110, label: "Easier" },
+        { time: 90, label: "Recommended" },
+        { time: 70, label: "Harder" }
+      ]
     };
 
     this.sweep = this.sweep.bind(this);
@@ -70,11 +77,11 @@ export class Game extends Component {
     this.revealCell = this.revealCell.bind(this);
     this.trackGuess = this.trackGuess.bind(this);
 
+    this.selectTimerOption = this.selectTimerOption.bind(this);
     
     this.timerInterval = null;
   }
 
-  // When the component unmounts, clear the timer interval
   componentWillUnmount() {
     window.removeEventListener('resize', this.handleResize);
     this.stopTimer();
@@ -85,7 +92,6 @@ export class Game extends Component {
     this.handleResize(); 
   }
   
-  // When game status changes from "playing" to something else, stop the timer
   componentDidUpdate(prevProps, prevState) {
     if (prevState.status === "playing" && this.state.status !== "playing") {
       this.stopTimer();
@@ -108,7 +114,6 @@ export class Game extends Component {
   revealCell(grid, click) {
     const [r, c] = click;
     grid[r][c].revealed = true;
-    // Recalculate bordering number for just this cell
     let count = 0;
     for (let i = r - 1; i <= r + 1; i++) {
       for (let j = c - 1; j <= c + 1; j++) {
@@ -326,48 +331,64 @@ export class Game extends Component {
     if (grid[r][c].knowable) {
       currentFailureProbability = 0;
     }
-    console.log('curr is');
-    console.log(currentFailureProbability);
-    console.log('pre');
-    console.log(newQuality.failureProbability);
       if (newQuality.failureProbability) {
-        console.log('fail prob is > 0');
         newQuality.failureProbability =
           ((newQuality.failureProbability * (newQuality.clicks - 1)) + currentFailureProbability) /
           newQuality.clicks;
       } else {
-        console.log('fail prob is 0');
         newQuality.failureProbability = currentFailureProbability;
       }
     
-    
-    console.log(newQuality);
-    return this.setState({
+      return this.setState({
       quality: newQuality
     })
   }
 
-  computeInitialTime() {
-    const { width, height, activeDifficulty } = this.state;
-    let baseTime = width * height * 0.7;
+  computeInitialTime(timerDifficulty, width, height, mines) {
+    const w = width || this.state.width;
+    const h = height || this.state.height;
+    const m = mines || this.state.mines;
+    const newTimerDifficulty = timerDifficulty || this.state.timerDifficulty;
+    const { activeDifficulty } = this.state;
+    let baseTime = w * h * 0.7;
+    
+    // Compute mine density and apply a linear mapping
+    const density = m / (w * h);
+    const A = 2.62;
+    const B = 0.3;
+    const densityFactor = A * density + B;
+    
+    let activeDiffFactor;
     switch (activeDifficulty) {
       case 'easy':
-        baseTime *= 1.5;
+        activeDiffFactor = 1.4;
         break;
       case 'normal':
-        baseTime *= 1.4;
+        activeDiffFactor = 1.7;
         break;
       case 'hard':
-        baseTime *= 1.8;
+        activeDiffFactor = 2;
         break;
       case 'crazy':
-        baseTime *= 2;
+        activeDiffFactor = 2.5;
         break;
       default:
-        baseTime *= 1;
+        activeDiffFactor = 1.5;
     }
-    return Math.ceil(baseTime / 10) * 10;
+    
+    let timerOptionFactor;
+    if (newTimerDifficulty === 'Easier') {
+      timerOptionFactor = 1.3;
+    } else if (newTimerDifficulty === 'Harder') {
+      timerOptionFactor = 0.8;
+    } else {
+      timerOptionFactor = 1;
+    }
+    
+    const finalTime = baseTime * densityFactor * activeDiffFactor * timerOptionFactor;
+    return Math.ceil(finalTime / 10) * 10;
   }
+  
   
 
   startTimer() {
@@ -400,7 +421,58 @@ export class Game extends Component {
   }
 
   updateTimer(value) {
-    this.setState({ timerOn: value });
+    this.setState({ 
+      timerOn: value,
+      time: value ? this.computeInitialTime() : 0,
+      timerMenuOpen: value
+    });
+  }
+
+  selectTimerOption(option) {
+    let newTime;
+    if (option.time) {
+      newTime = option.time
+    } else {
+      // No custom option provided—use the default computed time
+      newTime = this.computeInitialTime();
+    }
+    this.setState({ 
+      time: newTime,
+      timerDifficulty: option.difficulty
+    });
+  }
+  
+  updateTimerOptions (width, height, mines) {
+    const w = width || this.state.width;
+    const h = height || this.state.height;
+    const m = mines || this.state.mines;
+    let easier = this.computeInitialTime("Easier", w, h, m)
+    let recommended = this.computeInitialTime("Recommended", w, h, m)
+    let harder = this.computeInitialTime("Harder", w, h, m)
+    harder = harder > 10 ? harder : 10;
+    recommended = recommended > 20 ? recommended : 20;
+    easier = easier > 30 ? easier : 30;
+    if (harder === recommended) {
+      recommended += 10;
+    }
+    if (easier === recommended) {
+      easier += 10;
+    }
+
+    const timerOptions = [
+      { time: easier, 
+        label: "Easier" },
+      { time: recommended, 
+        label: "Recommended" },
+      { time: harder, 
+        label: "Harder" }
+    ];
+    this.setState(
+      {
+        timerOptions: timerOptions
+      }
+    )
+    return timerOptions;
   }
 
   toggleStatsPopup() {
@@ -419,7 +491,7 @@ export class Game extends Component {
       firstClick: true,
       gameGuessInsurance: this.state.defaultGuessInsurance,
       insuredCell: null,
-      time: this.state.timerOn ? this.computeInitialTime() : 0,
+      time: this.state.timerOn ? this.state.time : 0,
       quality: {
         clicks: 0,
         goodClicks: 0,
@@ -439,7 +511,7 @@ export class Game extends Component {
       newMines = Math.ceil((w * h) / 10);
     }
     if (this.state.activeDifficulty === 'normal') {
-      newMines = Math.ceil((w * h) / 6);
+      newMines = Math.ceil((w * h) / 7);
     }
     if (this.state.activeDifficulty === 'hard') {
       newMines = Math.ceil((w * h) / 4);
@@ -454,7 +526,8 @@ export class Game extends Component {
       remaining: newMines,
       activeSize: size,
       custom: false,
-      activeDifficulty: this.state.custom ? "normal" : this.state.activeDifficulty
+      activeDifficulty: this.state.custom ? "normal" : this.state.activeDifficulty,
+      timerOptions: this.updateTimerOptions(w, h, newMines)
     });
   }
 
@@ -483,7 +556,9 @@ export class Game extends Component {
       mines: newMines,
       activeDifficulty: difficulty,
       custom: false,
-      activeSize : this.state.custom ? "medium" : this.state.activeSize
+      activeSize : this.state.custom ? "medium" : this.state.activeSize,
+      time: this.computeInitialTime(null, null, null, newMines),
+      timerOptions: this.updateTimerOptions(this.state.width, this.state.height, newMines)    
     });
   }
 
@@ -520,7 +595,8 @@ export class Game extends Component {
     if (!/([\D])/.test(newWidth) && newWidth < 41 && newWidth <= this.state.maxWidth) {
       this.setState({
         width: newWidth,
-        maxMines: Math.round((newWidth * this.state.height) * 0.5)
+        maxMines: Math.round((newWidth * this.state.height) * 0.5),
+        timerOptions: this.updateTimerOptions(newWidth, this.state.height, this.state.mines)
       });
     }
   }
@@ -530,7 +606,8 @@ export class Game extends Component {
     if (!/([\D])/.test(newHeight) && newHeight < 41  && newHeight <= this.state.maxHeight) {
       this.setState({
         height: newHeight,
-        maxMines: Math.round((this.state.width * newHeight) * 0.5)
+        maxMines: Math.round((this.state.width * newHeight) * 0.5),
+        timerOptions: this.updateTimerOptions(this.state.width, newHeight, this.state.mines)
       });
     }
   }
@@ -541,7 +618,8 @@ export class Game extends Component {
     if (!/([\D])/.test(newMines) && e.target.value <= max) {
       this.setState({
         mines: newMines,
-        remaining: newMines
+        remaining: newMines,
+        timerOptions: this.updateTimerOptions(this.state.width, this.state.height, newMines)
       });
     }
   }
@@ -599,7 +677,7 @@ export class Game extends Component {
       remaining: this.state.mines,
       status: 'playing',
       firstClick: true,
-      time: 0,
+      time: this.state.timerOn ? this.computeInitialTime() : 0,
       quality: {
         clicks: 0,
         goodClicks: 0,
@@ -658,6 +736,10 @@ export class Game extends Component {
         maxMines={this.state.maxMines}
         timerOn={this.state.timerOn}
         updateTimer={this.updateTimer.bind(this)}
+        timerOptions={this.state.timerOptions}
+        timerMenuOpen={this.state.timerMenuOpen}
+        timerDifficulty={this.state.timerDifficulty}
+        selectTimerOption={this.selectTimerOption}
       />
     );
     if (!this.state.setup) {

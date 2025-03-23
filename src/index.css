@@ -81,7 +81,7 @@ h2 {
   }
   .grid-container {
     margin-top: 0px;
-    padding: 0 15px 15px 15px;
+    padding: 15px;
 
   }
   .grid-container .action-buttons {
@@ -336,7 +336,7 @@ h2 {
 
 
 @media (max-width: 800px) {
-  .action-buttons div {
+  .action-buttons .main-button, .action-buttons .pale-button{
     min-width: 80px;
     width: 50%;
     max-width: 180px;
@@ -351,6 +351,9 @@ h2 {
   height: 50px;
   border-radius: 12px;
   transition: all 0.3s ease-in-out;
+}
+.main-button p {
+  line-height: 22px;
 }
 
 .main-button:hover {
@@ -971,4 +974,19 @@ input:checked + .slider:before {
 
 .collapsible.open {
   max-height: 500px;
+}
+
+
+.timer-main {
+  text-transform: uppercase;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.timer-label {
+  font-size: 12px;
+  font-weight: 400;
+  opacity: 0.7;
+  margin: 0;
+  line-height: 1.2;
 }
