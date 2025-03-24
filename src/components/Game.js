@@ -33,6 +33,7 @@ export class Game extends Component {
       gameGuessInsurance: 0,
       firstClickInsuranceActive: false,
       guessInsuranceActive: false,
+      failedInsuranceActive: false,
       insuredCell: null,
       timerOn: false,
       time: 90,
@@ -137,7 +138,7 @@ export class Game extends Component {
     }
     let updatedGrid = [...grid];
     const [row, col] = click;
-    const quality = this.trackGuess(grid, row, col, this.state.quality)
+    this.trackGuess(grid, row, col, this.state.quality)
     let result;
 
     // First-Click Insurance
@@ -172,8 +173,8 @@ export class Game extends Component {
       return;
     }
 
-    // Pre-check for Guess Insurance
     const clickedCellForCheck = updatedGrid[row] && updatedGrid[row][col];
+    const isKnowable = clickedCellForCheck.knowable;
     if (
       !this.state.firstClick &&
       mine &&
@@ -262,6 +263,19 @@ export class Game extends Component {
           status: 'playing'
         });
       }
+    }
+    if (
+      !this.state.firstClick &&
+      mine &&
+      isKnowable &&
+      this.state.gameGuessInsurance > 0
+    ) {
+      setTimeout(() => {
+        this.setState({ failedInsuranceActive: true });
+      }, 2000);
+      setTimeout(() => {
+        this.setState({ failedInsuranceActive: false });
+      }, 6000);
     }
     this.setState({
       grid: updatedGrid,
@@ -769,6 +783,7 @@ export class Game extends Component {
           remaining={this.state.remaining}
           firstClickInsuranceActive={this.state.firstClickInsuranceActive}
           guessInsuranceActive={this.state.guessInsuranceActive}
+          failedInsuranceActive={this.state.failedInsuranceActive}
           insuredCell={this.state.insuredCell}
           defaultInsurance={this.state.defaultGuessInsurance}
           onImDone={this.handleImDone}

@@ -43,11 +43,16 @@ const Grid = props => {
     </div>
   );
 
-  let statusText;
+  let statusText, insuranceClass = "";
   if (props.firstClickInsuranceActive) {
     statusText = "Starter Shield";
+    insuranceClass = "insurance"
   } else if (props.guessInsuranceActive) {
     statusText = "Bomb Bailout";
+    insuranceClass = "insurance"
+  } else if (props.failedInsuranceActive) {
+    statusText = "Too Close to Bail Out";
+    insuranceClass = "failed-insurance"
   } else if (props.status === 'playing') {
     statusText = `${props.remaining} Remaining`;
   } else if (props.status === 'won') {
@@ -55,7 +60,7 @@ const Grid = props => {
   } else {
     statusText = "💥 KABOOM! YOU LOSE 💥";
   }
-
+  
   const isPlayingWithInsurance = (props.defaultInsurance > 0 && props.status === 'playing');
 
   let belowGrid;
@@ -85,14 +90,14 @@ const Grid = props => {
     if (props.status === 'won' || props.status === 'lost') {
       belowGrid = (
         <div className="status-message-container">
-          <div className={`status-message ${props.firstClickInsuranceActive || props.guessInsuranceActive ? "insurance" : ""} ${props.status}`}>
+          <div className={`status-message ${insuranceClass} ${props.status}`}>
             {statusText}
           </div>
         </div>
       );
     } else {
       belowGrid = props.remaining || props.status !== "playing" ? 
-        <div className={`status-message ${props.firstClickInsuranceActive || props.guessInsuranceActive ? "insurance" : ""} ${props.status}`}>
+        <div className={`status-message ${insuranceClass} ${props.status}`}>
           {statusText}
         </div> :
         <div className={`status-message main-button`} onClick={props.onImDone}>
