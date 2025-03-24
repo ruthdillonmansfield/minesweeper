@@ -344,12 +344,12 @@ export class Game extends Component {
     })
   }
 
-  computeInitialTime(timerDifficulty, width, height, mines) {
+  computeInitialTime(timerDifficulty, width, height, mines, difficulty) {
     const w = width || this.state.width;
     const h = height || this.state.height;
     const m = mines || this.state.mines;
+    const d = difficulty || this.state.activeDifficulty;
     const newTimerDifficulty = timerDifficulty || this.state.timerDifficulty;
-    const { activeDifficulty } = this.state;
     let baseTime = w * h * 0.7;
     
     // Compute mine density and apply a linear mapping
@@ -359,12 +359,12 @@ export class Game extends Component {
     const densityFactor = A * density + B;
     
     let activeDiffFactor;
-    switch (activeDifficulty) {
+    switch (d) {
       case 'easy':
         activeDiffFactor = 1.4;
         break;
       case 'normal':
-        activeDiffFactor = 1.7;
+        activeDiffFactor = 1.8;
         break;
       case 'hard':
         activeDiffFactor = 2;
@@ -442,13 +442,13 @@ export class Game extends Component {
     });
   }
   
-  updateTimerOptions (width, height, mines) {
+  updateTimerOptions (width, height, mines, difficulty) {
     const w = width || this.state.width;
     const h = height || this.state.height;
     const m = mines || this.state.mines;
-    let easier = this.computeInitialTime("Easier", w, h, m)
-    let recommended = this.computeInitialTime("Recommended", w, h, m)
-    let harder = this.computeInitialTime("Harder", w, h, m)
+    let easier = this.computeInitialTime("Easier", w, h, m, difficulty)
+    let recommended = this.computeInitialTime("Recommended", w, h, m, difficulty)
+    let harder = this.computeInitialTime("Harder", w, h, m, difficulty)
     harder = harder > 10 ? harder : 10;
     recommended = recommended > 20 ? recommended : 20;
     easier = easier > 30 ? easier : 30;
@@ -524,11 +524,12 @@ export class Game extends Component {
       mines: newMines,
       width: w,
       height: h,
+      maxMines: newMines,
       remaining: newMines,
       activeSize: size,
       custom: false,
       activeDifficulty: this.state.custom ? "normal" : this.state.activeDifficulty,
-      timerOptions: this.updateTimerOptions(w, h, newMines)
+      timerOptions: this.updateTimerOptions(w, h, newMines, difficulty)
     });
   }
 
@@ -541,25 +542,31 @@ export class Game extends Component {
 
   updateDifficulty(difficulty) {
     let newMines = 7;
+    const width = this.state.activeDifficulty === 'custom' ? 10 : this.state.width;
+    const height = this.state.activeDifficulty === 'custom' ? 10 : this.state.height;
+
     if (difficulty === 'easy') {
-      newMines = Math.ceil((this.state.width * this.state.height) / 10);
+      newMines = Math.ceil((width * height) / 10);
     }
     if (difficulty === 'normal') {
-      newMines = Math.ceil((this.state.width * this.state.height) / 6);
+      newMines = Math.ceil((width * height) / 7);
     }
     if (difficulty === 'hard') {
-      newMines = Math.ceil((this.state.width * this.state.height) / 4);
+      newMines = Math.ceil((width * height) / 4);
     }
     if (difficulty === 'crazy') {
-      newMines = Math.ceil((this.state.width * this.state.height) / 3);
+      newMines = Math.ceil((width * height) / 3);
     }
     this.setState({
       mines: newMines,
       activeDifficulty: difficulty,
+      height: height,
+      width: width,
+      maxMines: newMines,
       custom: false,
       activeSize : this.state.custom ? "medium" : this.state.activeSize,
-      time: this.computeInitialTime(null, null, null, newMines),
-      timerOptions: this.updateTimerOptions(this.state.width, this.state.height, newMines)    
+      time: this.computeInitialTime(null, width, height, newMines, difficulty),
+      timerOptions: this.updateTimerOptions(width, height, newMines, difficulty)    
     });
   }
 
