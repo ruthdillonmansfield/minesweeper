@@ -491,7 +491,7 @@ export class Game extends Component {
       firstClick: true,
       gameGuessInsurance: this.state.defaultGuessInsurance,
       insuredCell: null,
-      time: this.state.timerOn ? this.state.time : 0,
+      time: this.state.timerOn ? this.computeInitialTime() : 0,
       quality: {
         clicks: 0,
         goodClicks: 0,
@@ -506,17 +506,18 @@ export class Game extends Component {
   }
 
   updateSize(w, h, size) {
+    const difficulty = this.state.activeDifficulty === 'custom' ? 'normal' : this.state.activeDifficulty;
     let newMines = 7;
-    if (this.state.activeDifficulty === 'easy') {
+    if (difficulty === 'easy') {
       newMines = Math.ceil((w * h) / 10);
     }
-    if (this.state.activeDifficulty === 'normal') {
+    if (difficulty === 'normal') {
       newMines = Math.ceil((w * h) / 7);
     }
-    if (this.state.activeDifficulty === 'hard') {
+    if (difficulty === 'hard') {
       newMines = Math.ceil((w * h) / 4);
     }
-    if (this.state.activeDifficulty === 'crazy') {
+    if (difficulty === 'crazy') {
       newMines = Math.ceil((w * h) / 3);
     }
     this.setState({
@@ -592,10 +593,13 @@ export class Game extends Component {
 
   updateWidth(e) {
     let newWidth = e.target.value;
+    const newMaxMines = Math.round((newWidth * this.state.height) * 0.5);
+
     if (!/([\D])/.test(newWidth) && newWidth < 41 && newWidth <= this.state.maxWidth) {
       this.setState({
         width: newWidth,
-        maxMines: Math.round((newWidth * this.state.height) * 0.5),
+        mines: this.state.mines > newMaxMines ? newMaxMines : this.state.mines,
+        maxMines: newMaxMines,
         timerOptions: this.updateTimerOptions(newWidth, this.state.height, this.state.mines)
       });
     }
@@ -603,10 +607,12 @@ export class Game extends Component {
 
   updateHeight(e) {
     let newHeight = e.target.value;
+    const newMaxMines = Math.round((this.state.width * newHeight) * 0.5);
     if (!/([\D])/.test(newHeight) && newHeight < 41  && newHeight <= this.state.maxHeight) {
       this.setState({
         height: newHeight,
-        maxMines: Math.round((this.state.width * newHeight) * 0.5),
+        mines: this.state.mines > newMaxMines ? newMaxMines : this.state.mines,
+        maxMines: newMaxMines,
         timerOptions: this.updateTimerOptions(this.state.width, newHeight, this.state.mines)
       });
     }

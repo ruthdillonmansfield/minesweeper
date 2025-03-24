@@ -11,7 +11,7 @@ const formatTime = (time) => {
 const Setup = props => {
   return (
     <div className="Game">
-      <h2>GRID SIZE</h2>
+      <h2 className='mb-0'>FIELD SIZE</h2>
       <div className="buttons setup-buttons">
         <div
           className={`button sm ${props.activeSize === 'small' ? 'active' : ''}`}
@@ -57,7 +57,7 @@ const Setup = props => {
         </div>
       </div>
 
-      <h2>DIFFICULTY</h2>
+      <h2 className='mb-0'>DIFFICULTY</h2>
       <div className="buttons setup-buttons">
         <div
           className={`button ${props.activeDifficulty === 'easy' ? 'active' : ''}`}
