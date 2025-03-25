@@ -142,7 +142,7 @@ export class Game extends Component {
     let result;
 
     // First-Click Insurance
-    if (this.state.firstClick && mine) {
+    if (this.state.firstClick && mine && this.state.usingFirstClickInsurance) {
       updatedGrid = moveMine(updatedGrid, click);
       if (updatedGrid.fail) {
         this.setState({
